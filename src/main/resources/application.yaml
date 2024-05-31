@@ -1,0 +1,15 @@
+#server:
+#  servlet:
+#    context-path: /JavaWebFinal
+spring:
+  mvc:
+    view:
+      prefix: /
+      suffix: .jsp
+  application:
+    name: JavaWebFinal
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.180.244.15:3306/hzy_web
+    username: hzy
+    password: 111222333
