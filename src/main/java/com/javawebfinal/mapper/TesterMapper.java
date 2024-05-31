@@ -9,5 +9,5 @@ import java.util.List;
 @Mapper
 public interface TesterMapper {
     @Select("SELECT * FROM fi_test")
-    public List<Tester> selectAll();
+    List<Tester> selectAll();
 }
