@@ -9,8 +9,4 @@ public class IndexController {
     public String index(){
         return "index";
     }
-    @RequestMapping("/index_s")
-    public String index_s(){
-        return "index_s";
-    }
 }
