@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商城 - 购物车</title>
+    <script src="import/vue.js"></script>
+    <script src="import/axios.min.js"></script>
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="js/main.js"></script>
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-content {
+            margin-top: 64px;
+            padding: 0 10%;
+        }
+
+        .cart-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .cart-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-header class="header">
+            <el-row align="middle" justify="space-between" type="flex">
+                <el-col>
+                    <el-menu :default-active="activeIndex" mode="horizontal"
+                             style="background-color: rgba(255, 255, 255, 0.2)">
+                        <el-menu-item @click="navigateTo('/product')" index="1">商品列表</el-menu-item>
+                        <el-menu-item @click="navigateTo('/cart')" index="2">购物车</el-menu-item>
+                        <el-menu-item @click="navigateTo('/order')" index="3">订单管理</el-menu-item>
+                        <el-menu-item @click="navigateTo('/user')" index="4">个人信息</el-menu-item>
+                        <el-menu-item style="float: right">
+                            <el-col>
+                                <el-button @click="logout" plain type="danger">退出登录</el-button>
+                            </el-col>
+                        </el-menu-item>
+                    </el-menu>
+                </el-col>
+            </el-row>
+        </el-header>
+
+        <el-main class="main-content">
+            <el-table :data="cart" style="width: 100%">
+                <el-table-column label="商品">
+                    <template slot-scope="scope">
+                        <img :src="scope.row.image" alt="Product Image" class="cart-image">
+                    </template>
+                </el-table-column>
+                <el-table-column label="品牌" prop="brand"></el-table-column>
+                <el-table-column label="型号" prop="model"></el-table-column>
+                <el-table-column :formatter="(row) => formatCurrency(row.price)" label="单价"
+                                 prop="price"></el-table-column>
+                <el-table-column label="数量">
+                    <template slot-scope="scope">
+                        <el-button @click="updateQuantity(scope.row.product_id, 'reduce')" circle>-</el-button>
+                        <span>{{ scope.row.quantity }}</span>
+                        <el-button @click="updateQuantity(scope.row.product_id, 'add')" circle>+</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column :formatter="(row) => formatCurrency(row.price * row.quantity)"
+                                 label="总价"></el-table-column>
+            </el-table>
+        </el-main>
+
+        <el-footer class="cart-footer">
+            <div>
+                <span>商品总价:&nbsp;</span>
+                <span style="font-weight: bold; color: #f56c6c; font-size: 24px"> {{ total | currency }}</span>
+                <el-button @click="clearCart" plain type="danger">清空购物车</el-button>
+                <el-button @click="submitOrder" type="primary">提交订单</el-button>
+            </div>
+        </el-footer>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                activeIndex: '2',
+                uid: 1, // 假设用户ID为1
+                cart: [],
+                total: 0
+            },
+            created() {
+                this.fetchCart();
+            },
+            methods: {
+                fetchCart() {
+                    axios.get('/cart/getCart', {params: {uid: this.uid}})
+                        .then(response => {
+                            if (response.data.code === 1) {
+                                this.cart = response.data.data;
+                                this.calculateTotal();
+                            } else {
+                                this.$message.error(response.data.msg);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching cart:', error);
+                            this.$message.error('获取购物车失败');
+                        });
+                },
+                updateQuantity(pid, action) {
+                    const url = action === 'add' ? '/cart/addCart' : '/cart/reduceCart';
+                    axios.get(url, {params: {uid: this.uid, pid: pid}})
+                        .then(response => {
+                            if (response.data.code === 1) {
+                                this.$message.success(response.data.data);
+                                this.fetchCart();
+                            } else {
+                                this.$message.error(response.data.msg);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error updating cart:', error);
+                            this.$message.error('操作失败');
+                        });
+                },
+                clearCart() {
+                    axios.get('/cart/clearCart', {params: {uid: this.uid}})
+                        .then(response => {
+                            if (response.data.code === 1) {
+                                this.$message.success('购物车已清空');
+                                this.fetchCart();
+                            } else {
+                                this.$message.error(response.data.msg);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error clearing cart:', error);
+                            this.$message.error('清空购物车失败');
+                        });
+                },
+                submitOrder() {
+                    axios.get('/order/addOrder', {params: {uid: this.uid}})
+                        .then(response => {
+                            if (response.data.code === 1) {
+                                this.$message.success('订单已提交');
+                                this.fetchCart();
+                                this.navigateTo('/order');
+                            } else {
+                                this.$message.error(response.data.msg);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error submitting order:', error);
+                            this.$message.error('提交订单失败');
+                        });
+                },
+                calculateTotal() {
+                    this.total = this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                },
+                formatCurrency(value) {
+                    return '¥' + value;
+                },
+                navigateTo(path) {
+                    window.location.href = path;
+                },
+                logout() {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = 'login.html';
+                }
+            },
+            filters: {
+                currency(value) {
+                    return '¥' + value;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
