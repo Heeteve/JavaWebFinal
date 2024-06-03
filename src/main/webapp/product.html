@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商城</title>
+    <!--    <script src="https://unpkg.com/vue@2.6"></script>-->
+    <script src="import/vue.js"></script>
+    <!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+    <script src="import/axios.min.js"></script>
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="js/main.js"></script>
+    <style>
+        .detail-card {
+            .img{
+                width: 100%;
+                height: 800px;
+                object-fit: cover;
+            }
+        }
+
+        .product-card {
+            width: 240px;
+            margin: 20px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            color: #f56c6c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-container>
+            <el-header>
+                <el-row align="middle" justify="space-between" type="flex">
+                    <el-col>
+                        <el-menu :default-active="activeIndex" mode="horizontal">
+                            <el-menu-item index="1" @click="navigate('/product')">商品列表</el-menu-item>
+                            <el-menu-item index="2" @click="navigate('/cart')">购物车</el-menu-item>
+                            <el-menu-item index="3" @click="navigate('/order')">订单管理</el-menu-item>
+                            <el-menu-item index="4" @click="navigate('/user')">个人信息</el-menu-item>
+                            <el-menu-item style="float: right">
+                                <el-col>
+                                    <el-button @click="logout" type="danger" plain>退出登录</el-button>
+                                </el-col>
+                            </el-menu-item>
+                            <el-menu-item style="float: right">
+                                <el-input class="input-with-select" placeholder="搜索" v-model="searchQuery">
+                                    <el-button @click="searchProduct" icon="el-icon-search" slot="append" circle></el-button>
+                                </el-input>
+                            </el-menu-item >
+                        </el-menu>
+                    </el-col>
+                </el-row>
+            </el-header>
+
+            <el-main>
+                <el-row>
+                    <el-col :key="product.id" :offset="product > 0 ? 2 : 0" :span="6" v-for="product in products">
+                        <el-card @click.native="showDetail(product)" class="product-card">
+                            <img :src="product.image" alt="Product Image" class="product-image">
+                            <div class="product-info">
+                                <span>{{ product.brand }} {{ product.model }}</span>
+                                <span class="product-price">{{ product.price | currency }}</span>
+                            </div>
+                            <el-button icon="el-icon-shopping-cart-2" style="float: right; margin: 8px 0" @click.stop="addToCart(uid, product.id)" size="mini" type="primary"
+                                       round/>
+                        </el-card>
+                    </el-col>
+                </el-row>
+                <el-pagination
+                        :page-size="pageSize"
+                        :total="totalProducts"
+                        @current-change="fetchProducts"
+                        layout="prev, pager, next"
+                ></el-pagination>
+            </el-main>
+
+        </el-container>
+
+        <el-dialog class="detail-card" :visible.sync="dialogVisible" width="50%">
+            <img :src="selectedProduct.image" alt="Product Image" class="product-image">
+            <el-form :inline="true" label-position="left" label-width="120px">
+                <el-form-item label="商品名">
+                    <span>{{ selectedProduct.brand }} {{ selectedProduct.model }}</span>
+                </el-form-item>
+                <el-form-item label="价格">
+                    <span>{{ selectedProduct.price | currency }}</span>
+                </el-form-item>
+            </el-form>
+            <span>详情</span><br>
+            <span>{{ selectedProduct.detail }}</span>
+        </el-dialog>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                uid: '0',
+                activeIndex: '1',
+                searchQuery: '',
+                products: [],
+                totalProducts: 0,
+                pageSize: 12,
+                dialogVisible: false,
+                selectedProduct: {}
+            },
+            created() {
+                this.fetchProducts(1);
+                // 解码JWT获取当前uid
+                const jwt = localStorage.getItem('jwt');
+                if (jwt) {
+                    let userinfo = jwtParser(jwt);
+                    console.log(userinfo);
+                    this.uid = userinfo.id;
+                    console.log(this.uid);
+                }
+            },
+            methods: {
+                navigate(path) {
+                    window.location.href = path;
+                },
+                fetchProducts(page) {
+                    axios.get('/product/getProduct', {
+                        params: {
+                            page: page,
+                            size: this.pageSize
+                        }
+                    }).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.products = result.data.rows;
+                            this.totalProducts = result.data.total;
+                        } else {
+                            this.$message.error('获取商品列表失败');
+                        }
+                    }).catch(error => {
+                        console.error('Error fetching products:', error);
+                        this.$message.error('获取商品列表失败');
+                    });
+                },
+                showDetail(product) {
+                    this.selectedProduct = product;
+                    this.dialogVisible = true;
+                },
+                addToCart(uid, pid) {
+                    // console.log('uid:', uid, 'pid:', pid);
+                    axios.get('/cart/addCart', {
+                        params: {uid: uid, pid: pid}
+                    }).then(response => {
+                        if (response.data.code === 1) {
+                            this.$message.success('添加成功');
+                        } else {
+                            this.$message.error(response.data.msg);
+                        }
+                    }).catch(error => {
+                        console.error('Error adding to cart:', error);
+                        this.$message.error('添加失败');
+                    });
+                },
+                searchProduct() {
+                    // Handle product search
+                },
+                logout() {
+                    localStorage.removeItem('jwt');
+                    window.location.href = 'login.jsp';
+                }
+            },
+            filters: {
+                currency(value) {
+                    //return '¥' + value.toFixed(2);
+                    return '¥' + value;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
