@@ -12,7 +12,7 @@ function fetchUid() {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
         let userinfo = jwtParser(jwt);
-        console.log(userinfo);
-        this.uid = userinfo.id;
+        // console.log(userinfo);
+        return userinfo.id;
     }
 }

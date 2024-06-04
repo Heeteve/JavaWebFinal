@@ -38,6 +38,11 @@
             },
             methods: {
                 register() {
+                    // 检查是否为空
+                    if (this.username === '' || this.password === '' || this.tel === '' || this.address === '') {
+                        this.$message.error('请填写完整注册信息');
+                        return;
+                    }
                     const params = new URLSearchParams();
                     params.append('username', this.username);
                     params.append('password', this.password);
