@@ -19,11 +19,17 @@ public interface UserMapper {
     // 根据用户名和密码查询用户
     @Select("SELECT * FROM fi_user WHERE username = #{username} AND password = #{password}")
     User getUserByUsernameAndPassword(String username, String password);
+    // 查询余额
+    @Select("SELECT balance FROM fi_user WHERE id = #{id}")
+    double getBalanceByUid(int id);
     // 添加用户
     @Insert("INSERT INTO fi_user (username, password, balance, tel, address) VALUES (#{username}, #{password}, #{balance}, #{tel}, #{address})")
     @Options(useGeneratedKeys = true, keyProperty = "id, role")
     Boolean AddUser(User user);
-    //修改用户名
+    // 修改用户信息
+    @Update("UPDATE fi_user SET username = #{username}, password = #{password}, tel = #{tel}, address = #{address} WHERE id = #{id}")
+    User updateUser(User user);
+    // 修改用户名
     @Update("UPDATE fi_user SET username = #{username} WHERE id = #{id}")
     Boolean updateUsername(int id, String username);
     // 修改用户密码

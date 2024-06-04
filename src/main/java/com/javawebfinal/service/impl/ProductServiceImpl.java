@@ -3,12 +3,9 @@ package com.javawebfinal.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.javawebfinal.mapper.ProductMapper;
-import com.javawebfinal.mapper.TesterMapper;
 import com.javawebfinal.model.PageBean;
 import com.javawebfinal.model.Product;
-import com.javawebfinal.model.Tester;
 import com.javawebfinal.service.ProductService;
-import com.javawebfinal.service.TesterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

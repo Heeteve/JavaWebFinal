@@ -8,34 +8,8 @@
     <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="js/main.js"></script>
-    <style>
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 10;
-            background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-        }
-
-        .main-content {
-            margin-top: 64px;
-            padding: 0 10%;
-        }
-
-        .cart-image {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-        }
-
-        .cart-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/cart.css">
 </head>
 
 <body>
@@ -72,9 +46,11 @@
                                  prop="price"></el-table-column>
                 <el-table-column label="数量">
                     <template slot-scope="scope">
-                        <el-button @click="updateQuantity(scope.row.product_id, 'reduce')" circle>-</el-button>
-                        <span>{{ scope.row.quantity }}</span>
-                        <el-button @click="updateQuantity(scope.row.product_id, 'add')" circle>+</el-button>
+                        <el-button @click="updateQuantity(scope.row.product_id, 'reduce')" icon="el-icon-remove-outline"
+                                   size="mini"></el-button>
+                        <span>&nbsp{{ scope.row.quantity }}&nbsp</span>
+                        <el-button @click="updateQuantity(scope.row.product_id, 'add')" icon="el-icon-circle-plus-outline"
+                                   size="mini"></el-button>
                     </template>
                 </el-table-column>
                 <el-table-column :formatter="(row) => formatCurrency(row.price * row.quantity)"
@@ -83,10 +59,12 @@
         </el-main>
 
         <el-footer class="cart-footer">
-            <div>
+            <div style="margin: 0 20px; font-size: 20px">
                 <span>商品总价:&nbsp;</span>
-                <span style="font-weight: bold; color: #f56c6c; font-size: 24px"> {{ total | currency }}</span>
-                <el-button @click="clearCart" plain type="danger">清空购物车</el-button>
+                <span style="font-weight: bold; color: #f56c6c; font-size: 28px"> {{ total | currency }}</span>
+            </div>
+            <div>
+                <el-button @click="clearCart" icon="el-icon-delete" plain type="danger">清空购物车</el-button>
                 <el-button @click="submitOrder" type="primary">提交订单</el-button>
             </div>
         </el-footer>
@@ -97,11 +75,12 @@
             el: '#app',
             data: {
                 activeIndex: '2',
-                uid: 1, // 假设用户ID为1
+                uid: 0,
                 cart: [],
                 total: 0
             },
             created() {
+                fetchUid();
                 this.fetchCart();
             },
             methods: {
@@ -116,7 +95,7 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error fetching cart:', error);
+                            console.error('获取购物车失败:', error);
                             this.$message.error('获取购物车失败');
                         });
                 },
@@ -132,7 +111,7 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error updating cart:', error);
+                            console.error('操作失败:', error);
                             this.$message.error('操作失败');
                         });
                 },
@@ -147,7 +126,7 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error clearing cart:', error);
+                            console.error('清空购物车失败:', error);
                             this.$message.error('清空购物车失败');
                         });
                 },
@@ -163,7 +142,7 @@
                             }
                         })
                         .catch(error => {
-                            console.error('Error submitting order:', error);
+                            console.error('提交订单失败:', error);
                             this.$message.error('提交订单失败');
                         });
                 },
@@ -178,7 +157,7 @@
                 },
                 logout() {
                     localStorage.removeItem('jwtToken');
-                    window.location.href = 'login.html';
+                    window.location.href = 'login.jsp';
                 }
             },
             filters: {

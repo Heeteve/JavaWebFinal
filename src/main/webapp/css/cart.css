@@ -1,0 +1,12 @@
+.cart-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.cart-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px 10%;
+}

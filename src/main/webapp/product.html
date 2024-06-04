@@ -10,67 +10,8 @@
     <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="js/main.js"></script>
-    <style>
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 10;
-            background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(15px);
-        }
-
-        .main-content {
-            margin-top: 64px;
-            padding: 0 10%;
-        }
-
-        .detail-card {
-            /*display: flex;*/
-            /*flex-direction: column;*/
-            /*justify-content: center;*/
-            /*align-items: center;*/
-            font-size: 20px;
-        }
-
-        .detail {
-            margin: 20px;
-        }
-
-        .card-image {
-            text-align: center;
-            margin-bottom: 20px;
-
-            img {
-                max-width: 100%;
-                max-height: 500px;
-                object-fit: contain;
-                margin-bottom: 20px;
-            }
-        }
-
-        .product-card {
-            width: 240px;
-            margin: 20px;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .product-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .product-price {
-            color: #f56c6c;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/product.css">
 </head>
 
 <body>
@@ -130,20 +71,28 @@
 
         </el-container>
 
-        <!--商品详情-->
+        <!--商品详情弹出卡片-->
         <el-dialog :visible.sync="dialogVisible" class="detail-card" width="50%">
-            <div class="card-image">
-                <img :src="selectedProduct.image" alt="Product Image">
+            <div class="detail-card-content">
+                <div class="card-image">
+                    <img :src="selectedProduct.image" alt="Product Image">
+                </div>
+                <div class="detail-title">
+                    <el-form :inline="true" label-position="left" label-width="120px">
+                        <el-form-item style="margin-left: 25%">
+                            <span style="font-size: 24px;">{{ selectedProduct.brand }} {{ selectedProduct.model
+                                }}</span>
+                        </el-form-item>
+                        <el-form-item style="float: right; margin-right: 25%">
+                        <span class="product-price" style="font-size: 28px">{{ selectedProduct.price | currency
+                            }}</span>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <div class="detail">
+                    <span>{{ selectedProduct.detail }}</span>
+                </div>
             </div>
-            <el-form :inline="true" label-position="left" label-width="120px">
-                <el-form-item style="margin-left: 25%">
-                    <span style="font-size: 24px;">{{ selectedProduct.brand }} {{ selectedProduct.model }}</span>
-                </el-form-item>
-                <el-form-item style="float: right; margin-right: 25%">
-                    <span class="product-price" style="font-size: 28px">{{ selectedProduct.price | currency }}</span>
-                </el-form-item>
-            </el-form>
-            <span class="detail">{{ selectedProduct.detail }}</span>
         </el-dialog>
     </div>
 
@@ -162,15 +111,8 @@
                 selectedProduct: {}
             },
             created() {
+                fetchUid();
                 this.fetchProducts(this.page, this.pageSize);
-                // 解码JWT获取当前uid
-                const jwt = localStorage.getItem('jwt');
-                if (jwt) {
-                    let userinfo = jwtParser(jwt);
-                    console.log(userinfo);
-                    this.uid = userinfo.id;
-                    console.log(this.uid);
-                }
             },
             methods: {
                 navigate(path) {
@@ -191,7 +133,7 @@
                             this.$message.error('获取商品列表失败');
                         }
                     }).catch(error => {
-                        console.error('Error fetching products:', error);
+                        console.error('获取商品列表失败:', error);
                         this.$message.error('获取商品列表失败');
                     });
                 },
@@ -218,7 +160,7 @@
                             this.$message.error(response.data.msg);
                         }
                     }).catch(error => {
-                        console.error('Error adding to cart:', error);
+                        console.error('添加失败:', error);
                         this.$message.error('添加失败');
                     });
                 },
