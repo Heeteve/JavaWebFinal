@@ -19,8 +19,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int register(User user) {
-        return userMapper.AddUser(user);
+    public Boolean register(String username, String password, String tel, String address) {
+        // 检查是否已存在该用户
+        if (userMapper.getUserIdByUsername(username) != null) {
+            return false;
+        }else{
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setTel(tel);
+            user.setAddress(address);
+            user.setBalance(0.0);
+            return userMapper.AddUser(user);
+        }
     }
 
     @Override
@@ -34,22 +45,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int updateUserInfo(User user) {
-        return userMapper.updateUserAddress(user.getId(), user.getTel(), user.getAddress());
+    public Boolean updateUserInfo(User user) {
+        return null;
     }
 
     @Override
-    public int updatePassword(int id, String password) {
-        return userMapper.updatePassword(id, password);
+    public Boolean updatePassword(int id, String password) {
+        return null;
     }
 
     @Override
-    public int updateBalance(int id, double balance) {
-        return userMapper.updateBalance(id, balance);
+    public Boolean updateBalance(int id, double balance) {
+        return null;
     }
 
     @Override
-    public int deleteUser(int id) {
-        return userMapper.deleteUser(id);
+    public Boolean deleteUser(int id) {
+        return null;
     }
 }

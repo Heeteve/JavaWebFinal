@@ -12,7 +12,7 @@ public interface UserMapper {
     List<User> getAllUser();
     // 根据用户名查询用户id
     @Select("SELECT id FROM fi_user WHERE username = #{username}")
-    int getUserIdByUsername(String username);
+    Integer getUserIdByUsername(String username);
     // 根据用户id查询用户
     @Select("SELECT * FROM fi_user WHERE id = #{id}")
     User getUserById(int id);
@@ -22,23 +22,23 @@ public interface UserMapper {
     // 添加用户
     @Insert("INSERT INTO fi_user (username, password, balance, tel, address) VALUES (#{username}, #{password}, #{balance}, #{tel}, #{address})")
     @Options(useGeneratedKeys = true, keyProperty = "id, role")
-    int AddUser(User user);
+    Boolean AddUser(User user);
     //修改用户名
     @Update("UPDATE fi_user SET username = #{username} WHERE id = #{id}")
-    int updateUsername(int id, String username);
+    Boolean updateUsername(int id, String username);
     // 修改用户密码
     @Update("UPDATE fi_user SET password = #{password} WHERE id = #{id}")
-    int updatePassword(int id, String password);
+    Boolean updatePassword(int id, String password);
     // 修改用户余额
     @Update("UPDATE fi_user SET balance = #{balance} WHERE id = #{id}")
-    int updateBalance(int id, double balance);
+    Boolean updateBalance(int id, double balance);
     // 修改用户角色
     @Update("UPDATE fi_user SET role = #{role} WHERE id = #{id}")
-    int updateRole(int id, int role);
+    Boolean updateRole(int id, int role);
     // 修改用户地址信息
     @Update("UPDATE fi_user SET tel = #{tel}, address = #{address} WHERE id = #{id}")
-    int updateUserAddress(int id, String tel, String address);
+    Boolean updateUserAddress(int id, String tel, String address);
     // 删除用户
     @Delete("DELETE FROM fi_user WHERE id = #{id}")
-    int deleteUser(int id);
+    Boolean deleteUser(int id);
 }

@@ -21,7 +21,7 @@ public interface UserService {
      * @param user
      * @return int
      */
-    int register(User user);
+    Boolean register(String username, String password, String tel, String address);
 
     /**
      * 列出所有用户
@@ -42,27 +42,27 @@ public interface UserService {
      *
      * @param user
      */
-    int updateUserInfo(User user);
+    Boolean updateUserInfo(User user);
 
     /**
      * 修改密码
      * 
      * @param id, password
      */
-    int updatePassword(int id, String password);
+    Boolean updatePassword(int id, String password);
 
     /**
      * 修改余额
      * 
      * @param id, balance
      */
-    int updateBalance(int id, double balance);
+    Boolean updateBalance(int id, double balance);
 
     /**
      * 删除用户
      *
      * @param id
      */
-    int deleteUser(int id);
+    Boolean deleteUser(int id);
 
 }
