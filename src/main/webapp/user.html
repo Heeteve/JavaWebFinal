@@ -20,10 +20,14 @@
                     <el-col>
                         <el-menu :default-active="activeIndex" mode="horizontal"
                                  style="background-color: rgba(255, 255, 255, 0.2)">
-                            <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表</el-menu-item>
-                            <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车</el-menu-item>
-                            <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理</el-menu-item>
-                            <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息</el-menu-item>
+                            <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表
+                            </el-menu-item>
+                            <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车
+                            </el-menu-item>
+                            <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理
+                            </el-menu-item>
+                            <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息
+                            </el-menu-item>
                             <el-menu-item style="float: right">
                                 <el-col>
                                     <el-button @click="logout" plain type="danger">退出登录</el-button>
@@ -43,15 +47,11 @@
                     </div>
                     <div v-if="user">
                         <el-avatar icon="el-icon-user-solid"></el-avatar>
-                        <p><strong>用户名:</strong> {{ user.username }}</p>
-                        <p><strong>联系方式:</strong> {{ user.tel }}</p>
-                        <p><strong>地址:</strong> {{ user.address }}</p>
-                        <p><strong>余额:</strong> {{ user.balance.toFixed(2) }}</p>
-                        <p><strong>角色:</strong>
-                            <el-tag :type="user.role === 1 ? 'success' : 'info'">{{ user.role === 1 ? '管理员' : '普通用户'
-                                }}
-                            </el-tag>
-                        </p>
+                        <p><strong><i class="el-icon-user"></i></strong> {{ user.username }}</p>
+                        <p><strong><i class="el-icon-mobile-phone"></i></strong> {{ user.tel }}</p>
+                        <p><strong><i class="el-icon-location-outline"></i></strong> {{ user.address }}</p>
+                        <p><strong><i class="el-icon-wallet"></i></strong>￥{{ user.balance.toFixed(2) }}</p>
+                        <p><el-tag type="success" v-if="user.role === 1">管理员</el-tag></p>
                     </div>
                     <div v-else>
                         <el-skeleton :loading="loading" animated>
@@ -94,6 +94,7 @@
                 return {
                     activeIndex: '4',
                     user: null,
+                    uid: 0,
                     loading: true,
                     dialogVisible: false,
                     editForm: {
@@ -105,18 +106,19 @@
                     defaultAvatar: 'https://example.com/default-avatar.png' // 默认头像链接
                 };
             },
+            created() {
+                this.uid = fetchUid();
+                this.fetchUser();
+            },
             methods: {
-                navigateTo(route) {
-                    // 导航方法
-                    window.location.href = route;
-                },
                 logout() {
-                    // 退出登录方法
-                    console.log('Logout');
+                    localStorage.removeItem('jwtToken');
+                    // 清除cookie
+                    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    window.location.href = 'login.jsp';
                 },
-                getUser() {
-                    const uid = 1; // 假设用户ID为1
-                    axios.get(`/user/getUser`, {params: {uid}})
+                fetchUser() {
+                    axios.get(`/user/getUser`, {params: {uid: this.uid}})
                         .then(response => {
                             if (response.data.code === 1) {
                                 this.user = response.data.data;
@@ -147,10 +149,10 @@
                             console.error(error);
                             this.$message.error('用户信息更新失败');
                         });
+                },
+                navigateTo(route) {
+                    window.location.href = route;
                 }
-            },
-            created() {
-                this.getUser();
             }
         });
     </script>
