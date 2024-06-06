@@ -19,10 +19,10 @@
                 <el-col>
                     <el-menu :default-active="activeIndex" mode="horizontal"
                              style="background-color: rgba(255, 255, 255, 0.2)">
-                        <el-menu-item @click="navigateTo('/product')" index="1">商品列表</el-menu-item>
-                        <el-menu-item @click="navigateTo('/cart')" index="2">购物车</el-menu-item>
-                        <el-menu-item @click="navigateTo('/order')" index="3">订单管理</el-menu-item>
-                        <el-menu-item @click="navigateTo('/user')" index="4">个人信息</el-menu-item>
+                        <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表</el-menu-item>
+                        <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车</el-menu-item>
+                        <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理</el-menu-item>
+                        <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息</el-menu-item>
                         <el-menu-item style="float: right">
                             <el-col>
                                 <el-button @click="logout" plain type="danger">退出登录</el-button>
@@ -65,7 +65,7 @@
             </div>
             <div>
                 <el-button @click="clearCart" icon="el-icon-delete" plain type="danger">清空购物车</el-button>
-                <el-button @click="submitOrder" type="primary">提交订单</el-button>
+                <el-button @click="submitOrder" type="primary" icon="el-icon-circle-check">提交订单</el-button>
             </div>
         </el-footer>
     </div>

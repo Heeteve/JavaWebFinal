@@ -15,14 +15,18 @@
 <body>
     <div id="app">
         <el-header class="header">
-            <el-row type="flex" justify="space-between" align="middle">
+            <el-row align="middle" justify="space-between" type="flex">
                 <el-col>
                     <el-menu :default-active="activeIndex" mode="horizontal"
                              style="background-color: rgba(255, 255, 255, 0.2)">
-                        <el-menu-item @click="navigateTo('/product')" index="1">商品列表</el-menu-item>
-                        <el-menu-item @click="navigateTo('/cart')" index="2">购物车</el-menu-item>
-                        <el-menu-item @click="navigateTo('/order')" index="3">订单管理</el-menu-item>
-                        <el-menu-item @click="navigateTo('/user')" index="4">个人信息</el-menu-item>
+                        <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表
+                        </el-menu-item>
+                        <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车
+                        </el-menu-item>
+                        <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理
+                        </el-menu-item>
+                        <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息
+                        </el-menu-item>
                         <el-menu-item style="float: right">
                             <el-col>
                                 <el-button @click="logout" plain type="danger">退出登录</el-button>
@@ -34,32 +38,41 @@
         </el-header>
 
         <el-main class="main-content">
-            <div v-for="(order, index) in orders" :key="order.order_id">
-                <div class="order-info">
-                    <div>
-                        <span class="order-header">订单号: {{ order.order_id }}</span>
-                        <el-tag :type="getStatusType(order.status)">{{ getStatusText(order.status) }}</el-tag>
+            <div :key="order.order_id" v-for="(order, index) in orders">
+                <el-card class="order-card" shadow="hover">
+                    <div class="order-info">
+                        <div>
+                            <span class="order-header">订单号: {{ order.order_id }}</span>
+                            <el-tag :type="getStatusType(order.status)">{{ getStatusText(order.status) }}</el-tag>
+                        </div>
+                        <div class="order-actions">
+                            <span style="color: #606266">下单时间: {{order.order_time}}</span>
+                            <el-button @click="pay(order.order_id)" icon="el-icon-bank-card"
+                                       type="success" v-if="order.status === 0">支付
+                            </el-button>
+                            <el-button @click="cancelOrder(order.order_id)" icon="el-icon-circle-close"
+                                       type="danger" v-if="order.status === 0">取消
+                            </el-button>
+                            <el-button @click="confirmOrder(order.order_id)" icon="el-icon-box" plain
+                                       type="success" v-if="order.status === 1">确认收货
+                            </el-button>
+                            <el-button @click="cancelOrder(order.order_id)" icon="el-icon-delete" plain 
+                                       type="danger" v-if="order.status === 2">删除订单
+                            </el-button>
+                        </div>
                     </div>
-                    <div class="order-actions">
-                        <span style="color: #606266">下单时间: {{order.order_time}}</span>
-                        <el-button v-if="order.status === 0" type="success" @click="pay(order.order_id)">支付
-                        </el-button>
-                        <el-button v-if="order.status === 0" type="danger" @click="cancelOrder(order.order_id)">取消
-                        </el-button>
-                        <el-button v-if="order.status === 1" type="success" @click="confirmOrder(order.order_id)" plain>确认收货</el-button>
-                        <el-button v-if="order.status === 2" type="danger" @click="cancelOrder(order.order_id)" plain>删除订单</el-button>
-                    </div>
-                </div>
-                <el-table :data="order.products" style="width: 100%">
-                    <el-table-column label="商品图片">
-                        <template slot-scope="scope">
-                            <img :src="scope.row.image" class="product-image" alt="Product Image">
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="productName" label="商品名称"></el-table-column>
-                    <el-table-column prop="price" label="单价" :formatter="formatCurrency"></el-table-column>
-                    <el-table-column prop="quantity" label="数量"></el-table-column>
-                </el-table>
+                    <el-table :data="order.products" style="width: 100%">
+                        <el-table-column label="商品图片">
+                            <template slot-scope="scope">
+                                <img :src="scope.row.image" alt="Product Image" class="product-image">
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="商品名称" prop="productName"></el-table-column>
+                        <el-table-column :formatter="(row) => formatCurrency(row.price)" label="单价"
+                                         prop="price"></el-table-column>
+                        <el-table-column label="数量" prop="quantity"></el-table-column>
+                    </el-table>
+                </el-card>
             </div>
         </el-main>
     </div>
@@ -70,6 +83,7 @@
             data: {
                 activeIndex: '3',
                 uid: 0,
+                order: null,
                 orders: []
             },
             created() {
@@ -103,7 +117,7 @@
                                 products: []
                             });
                         }
-                        const order = ordersMap.get(item.order_id);
+                        order = ordersMap.get(item.order_id);
                         order.products.push({
                             productName: `${item.brand} ${item.model}`,
                             image: item.image,

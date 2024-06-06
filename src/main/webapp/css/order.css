@@ -6,6 +6,9 @@
     background-color: #f5f5f5;
 }
 
+.order-card{
+    margin-top: 20px;
+}
 .order-header {
     font-weight: bold;
 }
