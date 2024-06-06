@@ -40,12 +40,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User listSelf(int id) {
+    public User getSelf(int id) {
         return userMapper.getUserById(id);
     }
 
     @Override
     public Boolean updateUserInfo(User user) {
+        // 检查password是否为null
+        if (user.getPassword() == null) {
+            user.setPassword(userMapper.getUserById(user.getId()).getPassword());
+        }
+            
         return null;
     }
 

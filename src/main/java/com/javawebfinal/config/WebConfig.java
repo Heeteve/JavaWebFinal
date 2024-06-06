@@ -19,15 +19,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/error", "/register", "/login", "/favicon.ico", "/import/**", "/js/**", "/css/**", "/img/**");
     }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        // 增加跨域设置
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080")
-                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
-                .allowCredentials(true)
-                .allowedHeaders("*")
-                .maxAge(3600);
-    }
 }

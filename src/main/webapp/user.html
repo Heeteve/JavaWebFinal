@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商城 - 用户信息</title>
+    <script src="import/vue.js"></script>
+    <script src="import/axios.min.js"></script>
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="js/main.js"></script>
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/user.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <el-container>
+            <el-header class="header">
+                <el-row align="middle" justify="space-between" type="flex">
+                    <el-col>
+                        <el-menu :default-active="activeIndex" mode="horizontal"
+                                 style="background-color: rgba(255, 255, 255, 0.2)">
+                            <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表</el-menu-item>
+                            <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车</el-menu-item>
+                            <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理</el-menu-item>
+                            <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息</el-menu-item>
+                            <el-menu-item style="float: right">
+                                <el-col>
+                                    <el-button @click="logout" plain type="danger">退出登录</el-button>
+                                </el-col>
+                            </el-menu-item>
+                        </el-menu>
+                    </el-col>
+                </el-row>
+            </el-header>
+
+            <el-main class="main-content">
+                <el-card class="user-info-card">
+                    <div class="clearfix" slot="header">
+                        <span>用户信息</span>
+                        <el-button @click="dialogVisible = true" style="float: right" type="primary">编辑信息
+                        </el-button>
+                    </div>
+                    <div v-if="user">
+                        <el-avatar icon="el-icon-user-solid"></el-avatar>
+                        <p><strong>用户名:</strong> {{ user.username }}</p>
+                        <p><strong>联系方式:</strong> {{ user.tel }}</p>
+                        <p><strong>地址:</strong> {{ user.address }}</p>
+                        <p><strong>余额:</strong> {{ user.balance.toFixed(2) }}</p>
+                        <p><strong>角色:</strong>
+                            <el-tag :type="user.role === 1 ? 'success' : 'info'">{{ user.role === 1 ? '管理员' : '普通用户'
+                                }}
+                            </el-tag>
+                        </p>
+                    </div>
+                    <div v-else>
+                        <el-skeleton :loading="loading" animated>
+                            <el-skeleton-item variant="image"></el-skeleton-item>
+                            <el-skeleton-item variant="h1"></el-skeleton-item>
+                            <el-skeleton-item variant="text"></el-skeleton-item>
+                            <el-skeleton-item variant="text"></el-skeleton-item>
+                            <el-skeleton-item variant="text"></el-skeleton-item>
+                        </el-skeleton>
+                    </div>
+                </el-card>
+
+                <el-dialog :visible.sync="dialogVisible" title="编辑用户信息">
+                    <el-form :model="editForm">
+                        <el-form-item label="用户名">
+                            <el-input v-model="editForm.username"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码">
+                            <el-input type="password" v-model="editForm.password"></el-input>
+                        </el-form-item>
+                        <el-form-item label="联系方式">
+                            <el-input v-model="editForm.tel"></el-input>
+                        </el-form-item>
+                        <el-form-item label="地址">
+                            <el-input v-model="editForm.address"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div class="dialog-footer" slot="footer">
+                        <el-button @click="dialogVisible = false">取消</el-button>
+                        <el-button @click="submitEditForm" type="primary">提交</el-button>
+                    </div>
+                </el-dialog>
+            </el-main>
+        </el-container>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    activeIndex: '4',
+                    user: null,
+                    loading: true,
+                    dialogVisible: false,
+                    editForm: {
+                        username: '',
+                        password: '',
+                        tel: '',
+                        address: ''
+                    },
+                    defaultAvatar: 'https://example.com/default-avatar.png' // 默认头像链接
+                };
+            },
+            methods: {
+                navigateTo(route) {
+                    // 导航方法
+                    window.location.href = route;
+                },
+                logout() {
+                    // 退出登录方法
+                    console.log('Logout');
+                },
+                getUser() {
+                    const uid = 1; // 假设用户ID为1
+                    axios.get(`/user/getUser`, {params: {uid}})
+                        .then(response => {
+                            if (response.data.code === 1) {
+                                this.user = response.data.data;
+                                this.editForm = {...this.user, password: ''}; // 初始化编辑表单
+                            } else {
+                                this.$message.error('获取用户信息失败');
+                            }
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            this.$message.error('获取用户信息失败');
+                            this.loading = false;
+                        });
+                },
+                submitEditForm() {
+                    axios.post(`/user/updateUser`, {...this.editForm, id: this.user.id})
+                        .then(response => {
+                            if (response.data.code === 1) {
+                                this.$message.success('用户信息更新成功');
+                                this.user = {...this.user, ...this.editForm, password: undefined};
+                                this.dialogVisible = false;
+                            } else {
+                                this.$message.error('用户信息更新失败');
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            this.$message.error('用户信息更新失败');
+                        });
+                }
+            },
+            created() {
+                this.getUser();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 package com.javawebfinal.service;
 
 import com.javawebfinal.model.User;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public interface UserService {
      * 
      * @param id
      */
-    User listSelf(int id);
+    User getSelf(int id);
     
     /**
      * 修改用户信息
