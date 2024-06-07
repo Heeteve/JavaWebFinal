@@ -13,6 +13,3 @@ spring:
       suffix: .html
   application:
     name: JavaWebFinal
-  web:
-    resources:
-      static-locations: classpath:/webapp/,classpath:/static/,classpath:/resources/

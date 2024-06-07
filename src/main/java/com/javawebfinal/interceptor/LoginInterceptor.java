@@ -14,7 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
-        /*String url = req.getRequestURL().toString();
+        String url = req.getRequestURL().toString();
         log.info("请求url: {}", url);
         // 获取Cookie
         Cookie[] cookies = req.getCookies();
@@ -35,7 +35,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             resp.setContentType("text/html;charset=utf-8");
             resp.getWriter().write(s);
             // 跳转登录页
-            resp.setHeader("refresh", "2;url=/login.jsp");
+            resp.setHeader("refresh", "2;url=/login.html");
             return false;
         }
 
@@ -49,10 +49,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             resp.setContentType("text/html;charset=utf-8");
             resp.getWriter().write(s);
             // 跳转登录页
-            resp.setHeader("refresh", "2;url=/login.jsp");
+            resp.setHeader("refresh", "2;url=/login.html");
             return false;
         }
-        log.info("放行请求");*/
+        log.info("放行请求");
         return true;
     }
 }
