@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: hzyJavaWebFinal
+  name: hzyjavawebfinal
   namespace: hzy
 spec:
   selector:
-    app: hzyJavaWebFinal
+    app: hzyjavawebfinal
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
-      name: hzyJavaWebFinal-80
+      targetPort: 8080
+      name: hzyjavawebfinal-80
   type: NodePort
