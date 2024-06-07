@@ -31,9 +31,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 判断jwt令牌是否存在
         if (!StringUtils.hasLength(jwt)) {
             log.warn("拦截请求：Cookie为空");
-            String s = "未登录，2秒后跳转登录页";
             resp.setContentType("text/html;charset=utf-8");
-            resp.getWriter().write(s);
+            resp.getWriter().write("未登录，2秒后跳转登录页");
             // 跳转登录页
             resp.setHeader("refresh", "2;url=/login.html");
             return false;
@@ -43,11 +42,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             JwtUtils.parseJWT(jwt);
         } catch (Exception e) {//jwt解析失败
-            e.printStackTrace();
-            log.error("拦截请求：解析令牌失败");
-            String s = "令牌错误，请重新登录";
+            log.error("jwt解析失败", e);
             resp.setContentType("text/html;charset=utf-8");
-            resp.getWriter().write(s);
+            resp.getWriter().write("令牌错误，请重新登录");
             // 跳转登录页
             resp.setHeader("refresh", "2;url=/login.html");
             return false;

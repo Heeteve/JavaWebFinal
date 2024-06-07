@@ -23,16 +23,16 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(String username, String password, HttpServletResponse resp) {
-        log.info("User login " + username + " " + password);
+        log.info("User login {}" ,username);
         User user = userService.login(username, password);
-        log.info("user: " + user);
+        log.info("user logged in: {}", user);
         if (user != null) {
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", user.getId());
             claims.put("username", user.getUsername());
             claims.put("role", user.getRole());
             String jwt = JwtUtils.generateJWT(claims);
-            log.info("jwt: " + jwt);
+            //log.info("jwt: {}", jwt);
 
             Cookie cookie = new Cookie("jwt", jwt);
             cookie.setPath("/");

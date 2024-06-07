@@ -45,12 +45,6 @@
                                 console.log(response.data);
                                 const jwt = response.data.data;
                                 localStorage.setItem('jwt', jwt);
-                                // 配置请求头
-                                let token = localStorage.getItem('jwt');
-                                if (token) {
-                                    console.log(token);
-                                    axios.defaults.headers.common['token'] = token;
-                                }
                                 window.location.href = 'product';
                             } else {
                                 this.$message.error(result.msg);
