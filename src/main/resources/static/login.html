@@ -4,24 +4,25 @@
 <head>
     <meta charset="utf-8">
     <title>商城 - 登录</title>
-    <link rel="stylesheet" href="css/login.css">
-<!--    <script src="https://unpkg.com/vue@2.6"></script>-->
+    <link href="css/login.css" rel="stylesheet">
+    <!--    <script src="https://unpkg.com/vue@2.6"></script>-->
     <script src="import/vue.js"></script>
-<!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+    <!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
     <script src="import/axios.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="js/main.js"></script>
 </head>
 
 <body>
-    <div id="login" class="login">
+    <div class="login" id="login">
         <h1>商城</h1>
-            <form>
-                <input type="text" placeholder="用户名" id="username" v-model="username" required >
-                <input type="password" placeholder="密码" id="password" v-model="password" required>
-                <button type="button" id="login_button" @click="login">Login</button>
-                <button type="button" @click="register">sign in</button>
-            </form>
+        <form>
+            <input id="username" placeholder="用户名" required type="text" v-model="username">
+            <input id="password" placeholder="密码" required type="password" v-model="password">
+            <button @click="login" id="login_button" type="button">Login</button>
+            <button @click="register" type="button">sign in</button>
+        </form>
     </div>
 
     <script>
@@ -42,22 +43,24 @@
                             const result = response.data;
                             if (result.code === 1) {
                                 this.$message.success('登录成功');
-                                console.log(response.data);
-                                const jwt = response.data.data;
-                                //localStorage.setItem('jwt', jwt);
-                                window.location.href = 'product';
+                                const role = fetchRole(); // 0：普通用户，1：管理员
+                                if (role === 1) {
+                                    window.location.href = '/product/admin';
+                                } else {
+                                    window.location.href = '/product';
+                                }
                             } else {
                                 this.$message.error(result.msg);
                             }
                         })
                 },
-                register(){
+                register() {
                     window.location.href = 'register.html'
                 }
             }
         });
     </script>
-    
+
     <script>
         let login = document.querySelector('.login');
         let effect;
@@ -69,8 +72,8 @@
             // 计算进入位置
             let top = e.clientY - e.target.offsetTop;
             let left = e.clientX - e.target.offsetLeft;
-            effect.style.top = top +'px';
-            effect.style.left = left +'px';
+            effect.style.top = top + 'px';
+            effect.style.left = left + 'px';
         })
 
         login.addEventListener('mouseleave', function (e) {
@@ -78,10 +81,10 @@
             // 计算离开位置
             let top = e.clientY - e.target.offsetTop;
             let left = e.clientX - e.target.offsetLeft;
-            effect.style.top = top +'px';
-            effect.style.left = left +'px';
+            effect.style.top = top + 'px';
+            effect.style.left = left + 'px';
         })
-        
+
         // 监听回车键执行login
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {

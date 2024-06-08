@@ -34,4 +34,19 @@ public class ProductServiceImpl implements ProductService {
         PageBean pageBean = new PageBean(p.getTotal(), p.getResult());
         return pageBean;
     }
+
+    @Override
+    public Boolean updateProduct(Product product) {
+        return productMapper.updateProductById(product);
+    }
+
+    @Override
+    public Boolean addProduct(Product product) {
+        return productMapper.addProduct(product);
+    }
+
+    @Override
+    public Boolean deleteProduct(Integer id) {
+        return productMapper.deleteProductById(id);
+    }
 }

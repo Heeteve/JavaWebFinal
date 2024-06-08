@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商城 - 管理员</title>
+    <script src="/import/vue.js"></script>
+    <script src="/import/axios.min.js"></script>
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="/js/main.js"></script>
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/product-admin.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <el-container>
+            <el-header class="header">
+                <el-row align="middle" justify="space-between" type="flex">
+                    <el-col>
+                        <el-menu :default-active="activeIndex" mode="horizontal"
+                                 style="background-color: rgba(255, 255, 255, 0.2)">
+                            <el-menu-item @click="navigateTo('/product/admin')" index="1"><i class="el-icon-goods"></i>商品管理
+                            </el-menu-item
+                            <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理
+                            </el-menu-item>
+                            <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息
+                            </el-menu-item>
+                            <el-menu-item style="float: right">
+                                <el-col>
+                                    <el-button @click="logout" plain type="danger">退出登录</el-button>
+                                </el-col>
+                            </el-menu-item>
+                        </el-menu>
+                    </el-col>
+                </el-row>
+            </el-header>
+
+            <el-main class="main-content">
+                <el-table :data="products" style="width: 100%">
+                    <el-table-column align="center" type="index" width="50px"></el-table-column>
+                    <el-table-column label="品牌">
+                        <template slot-scope="scope">
+                            <el-input :disabled="scope.row.isEditing ? false : true"
+                                      v-model="scope.row.brand"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="型号">
+                        <template slot-scope="scope">
+                            <el-input :disabled="scope.row.isEditing ? false : true"
+                                      v-model="scope.row.model"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="单价">
+                        <template slot-scope="scope">
+                            <el-input :disabled="scope.row.isEditing ? false : true"
+                                      v-model="scope.row.price"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="详情" min-width="200px">
+                        <template slot-scope="scope">
+                            <el-input :autosize="{ minRows: 1.35, maxRows: 4}"
+                                      :disabled="scope.row.isEditing ? false : true" type="textarea"
+                                      v-model="scope.row.detail"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button @click="editProduct(scope.row)" size="mini" type="primary">
+                                {{ scope.row.isEditing ? '保存' : '编辑' }}
+                            </el-button>
+                            <el-button @click="scope.row.isEditing = false" size="mini" type="info"
+                                       v-if="scope.row.isEditing">取消
+                            </el-button>
+                            <el-popconfirm @confirm="deleteProduct(scope.row.id)"
+                                           title="确认删除该商品？"
+                                           icon="el-icon-info" icon-color="red">
+                                <el-button size="mini" slot="reference" type="danger">删除</el-button>
+                            </el-popconfirm>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+                </el-table>
+                <el-table :data="[newProduct]" style="width: 100%">
+                    <el-table-column width="50"></el-table-column>
+                    <el-table-column label="添加商品">
+                        <template slot-scope="scope">
+                            <el-input placeholder="品牌" v-model="newProduct.brand"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template slot-scope="scope">
+                            <el-input placeholder="型号" v-model="newProduct.model"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template slot-scope="scope">
+                            <el-input placeholder="价格" v-model="newProduct.price"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template slot-scope="scope">
+                            <el-input placeholder="详情" v-model="newProduct.detail"></el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column>
+                        <template slot-scope="scope">
+                            <el-button @click="addProduct" plain size="mini" type="success">添加</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-main>
+        </el-container>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                uid: '0',
+                activeIndex: '1',
+                products: [],
+                newProduct: {
+                    brand: '',
+                    model: '',
+                    price: '',
+                    detail: ''
+                }
+            },
+            created() {
+                this.uid = this.fetchUid();
+                this.fetchProducts();
+            },
+            methods: {
+                navigateTo(path) {
+                    window.location.href = path;
+                },
+                fetchUid() {
+                    // Mock function to fetch user ID
+                    return 1;
+                },
+                fetchProducts() {
+                    axios.get('/product/admin/getProduct', {}).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.products = result.data.map(product => ({
+                                ...product,
+                                isEditing: false
+                            }));
+                        } else {
+                            this.$message.error('获取商品列表失败');
+                        }
+                    }).catch(error => {
+                        console.error('获取商品列表失败:', error);
+                        this.$message.error('获取商品列表失败');
+                    });
+                },
+                editProduct(product) {
+                    product.isEditing = !product.isEditing;
+                    if (!product.isEditing) {
+                        axios.post('/product/admin/updateProduct', product).then(response => {
+                            const result = response.data;
+                            if (result.code === 1) {
+                                this.$message.success(result.data);
+                            } else {
+                                this.$message.error(result.msg);
+                            }
+                        }).catch(error => {
+                            console.error('更新商品信息失败:', error);
+                            this.$message.error('更新商品信息失败');
+                        });
+                    }
+                },
+                addProduct() {
+                    axios.post('/product/admin/addProduct', this.newProduct).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.$message.success(result.data);
+                            this.newProduct = {brand: '', model: '', price: '', stock: ''};
+                            this.fetchProducts(this.page, this.pageSize);
+                        } else {
+                            this.$message.error(result.msg);
+                        }
+                    }).catch(error => {
+                        console.error('添加商品失败:', error);
+                        this.$message.error(result.msg);
+                    });
+                },
+                deleteProduct(productId) {
+                    axios.get(`/product/admin/deleteProduct`, {params: {id: productId}})
+                        .then(response => {
+                            const result = response.data;
+                            if (result.code === 1) {
+                                this.$message.success(result.data);
+                                this.fetchProducts();
+                            } else {
+                                this.$message.error(result.msg);
+                            }
+                        }).catch(error => {
+                        console.error('删除商品失败:', error);
+                        this.$message.error('删除商品失败');
+                    });
+                },
+                logout: logout
+            }
+        });
+    </script>
+</body>
+</html>

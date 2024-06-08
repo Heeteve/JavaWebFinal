@@ -15,7 +15,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
-        log.info("请求url: {}", url);
+        //log.info("请求url: {}", url);
         // 获取Cookie
         Cookie[] cookies = req.getCookies();
         String jwt = null;
@@ -49,7 +49,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             resp.setHeader("refresh", "2;url=/login.html");
             return false;
         }
-        log.info("放行请求");
+        //log.info("放行请求");
         return true;
     }
 }

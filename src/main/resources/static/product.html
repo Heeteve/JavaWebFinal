@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>商城</title>
-    <!--    <script src="https://unpkg.com/vue@2.6"></script>-->
     <script src="import/vue.js"></script>
-    <!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
     <script src="import/axios.min.js"></script>
     <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -84,7 +82,7 @@
                             <span style="font-size: 24px;">{{ selectedProduct.brand }} {{ selectedProduct.model }}</span>
                         </el-form-item>
                         <el-form-item style="float: right; margin-right: 20%">
-                            <el-button @click.stop="addToCart(uid, selectedProduct.id)" icon="el-icon-shopping-cart-2"
+                            <el-button @click="addToCart(uid, selectedProduct.id)" icon="el-icon-shopping-cart-2"
                                        size="mini" style="float: right; margin: 6px 0"
                                        type="primary">
                             </el-button>
@@ -159,18 +157,18 @@
                     axios.get('/cart/addCart', {
                         params: {uid: uid, pid: pid}
                     }).then(response => {
-                        if (response.data.code === 1) {
-                            this.$message.success('添加成功');
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.$message.success(result.data);
                         } else {
-                            this.$message.error(response.data.msg);
+                            this.$message.error(result.msg);
                         }
                     }).catch(error => {
-                        console.error('添加失败:', error);
                         this.$message.error('添加失败');
                     });
                 },
                 searchProduct() {
-                    // Handle product search
+                    // 搜索函数
                 },
                 logout: logout
             },

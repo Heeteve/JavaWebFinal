@@ -16,8 +16,29 @@ public interface ProductService {
      * 分页查询
      *
      * @param page
-     * @param pageSize
+     * @param size
      * @return
      */
     PageBean page(Integer page, Integer size);
+
+    /**
+     * 修改商品信息
+     * @param product
+     * @return Boolean
+     */
+    Boolean updateProduct(Product product);
+
+    /**
+     * 添加商品
+     * @param product
+     * @return
+     */
+    Boolean addProduct(Product product);
+
+    /**
+     * 删除商品
+     * @param id
+     * @return
+     */
+    Boolean deleteProduct(Integer id);
 }

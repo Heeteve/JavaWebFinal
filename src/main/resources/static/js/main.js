@@ -6,13 +6,22 @@ function jwtParser(token) {
 }
 
 function fetchUid() {
-    // const jwt = localStorage.getItem('jwt');
-    // 获取jwt
     const jwt = getCookie('jwt');
     if (jwt) {
         const userinfo = jwtParser(jwt);
         console.log(userinfo);
         return userinfo.id;
+    } else {
+        return 0;
+    }
+}
+
+function fetchRole() {
+    const jwt = getCookie('jwt');
+    if (jwt) {
+        const userinfo = jwtParser(jwt);
+        console.log(userinfo);
+        return userinfo.role;
     } else {
         return 0;
     }
@@ -33,5 +42,5 @@ function getCookie(cookieName) {
 function logout(){
     // 清除jwt
     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    window.location.href = 'login.html';
+    window.location.href = '/login.html';
 }
