@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: hzy-javawebfinal
-          image: talangtuandui-docker.pkg.coding.net/hzyjavaweb/main/hzyjavawebfinal:develop
+          image: talangtuandui-docker.pkg.coding.net/hzyjavaweb/main/hzyjavawebfinal:master
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

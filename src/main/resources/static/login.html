@@ -44,7 +44,7 @@
                                 this.$message.success('登录成功');
                                 console.log(response.data);
                                 const jwt = response.data.data;
-                                localStorage.setItem('jwt', jwt);
+                                //localStorage.setItem('jwt', jwt);
                                 window.location.href = 'product';
                             } else {
                                 this.$message.error(result.msg);
