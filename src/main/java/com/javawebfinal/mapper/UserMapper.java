@@ -28,22 +28,13 @@ public interface UserMapper {
     Boolean AddUser(User user);
     // 修改用户信息
     @Update("UPDATE fi_user SET username = #{username}, password = #{password}, tel = #{tel}, address = #{address} WHERE id = #{id}")
-    User updateUser(User user);
-    // 修改用户名
-    @Update("UPDATE fi_user SET username = #{username} WHERE id = #{id}")
-    Boolean updateUsername(int id, String username);
-    // 修改用户密码
-    @Update("UPDATE fi_user SET password = #{password} WHERE id = #{id}")
-    Boolean updatePassword(int id, String password);
+    Boolean updateUser(User user);
     // 修改用户余额
     @Update("UPDATE fi_user SET balance = #{balance} WHERE id = #{id}")
     Boolean updateBalance(int id, double balance);
     // 修改用户角色
     @Update("UPDATE fi_user SET role = #{role} WHERE id = #{id}")
     Boolean updateRole(int id, int role);
-    // 修改用户地址信息
-    @Update("UPDATE fi_user SET tel = #{tel}, address = #{address} WHERE id = #{id}")
-    Boolean updateUserAddress(int id, String tel, String address);
     // 删除用户
     @Delete("DELETE FROM fi_user WHERE id = #{id}")
     Boolean deleteUser(int id);

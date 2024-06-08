@@ -1,0 +1,23 @@
+.main-content {
+    margin-top: 44px;
+    padding: 20px 5% 5%;
+}
+
+.user-card {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.el-card.is-always-shadow{
+    box-shadow: 2px 6px 20px 8px rgba(235, 237, 240, 0.6);
+}
+
+.el-dialog {
+    border-radius: 15px;
+}

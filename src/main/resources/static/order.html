@@ -43,6 +43,7 @@
                     <div class="order-info">
                         <div>
                             <span class="order-header">订单号: {{ order.order_id }}</span>
+                            <span class="order-total">{{ formatCurrency(order.total) }}</span>
                             <el-tag :type="getStatusType(order.status)">{{ getStatusText(order.status) }}</el-tag>
                         </div>
                         <div class="order-actions">
@@ -56,7 +57,7 @@
                             <el-button @click="confirmOrder(order.order_id)" icon="el-icon-box" plain
                                        type="success" v-if="order.status === 1">确认收货
                             </el-button>
-                            <el-button @click="cancelOrder(order.order_id)" icon="el-icon-delete" plain 
+                            <el-button @click="cancelOrder(order.order_id)" icon="el-icon-delete" plain
                                        type="danger" v-if="order.status === 2">删除订单
                             </el-button>
                         </div>
@@ -84,7 +85,7 @@
                 activeIndex: '3',
                 uid: 0,
                 order: null,
-                orders: []
+                orders: [],
             },
             created() {
                 this.uid = fetchUid();
@@ -94,11 +95,11 @@
                 fetchOrders() {
                     axios.get('/order/getOrder', {params: {uid: this.uid}})
                         .then(response => {
-                            if (response.data.code === 1) {
-                                const orders = this.groupOrders(response.data.data);
-                                this.orders = orders;
+                            const result = response.data;
+                            if (result.code === 1) {
+                                this.orders = this.separateOrders(result.data);
                             } else {
-                                this.$message.error(response.data.msg);
+                                this.$message.error(result.msg);
                             }
                         })
                         .catch(error => {
@@ -106,7 +107,7 @@
                             this.$message.error('获取订单失败');
                         });
                 },
-                groupOrders(data) {
+                separateOrders(data) {
                     const ordersMap = new Map();
                     data.forEach(item => {
                         if (!ordersMap.has(item.order_id)) {
@@ -114,6 +115,7 @@
                                 order_id: item.order_id,
                                 order_time: item.order_time,
                                 status: item.status,
+                                total: 0.0,
                                 products: []
                             });
                         }
@@ -122,8 +124,9 @@
                             productName: `${item.brand} ${item.model}`,
                             image: item.image,
                             price: item.price,
-                            quantity: item.quantity
+                            quantity: item.quantity,
                         });
+                        order.total += item.price * item.quantity;
                     });
                     return Array.from(ordersMap.values());
                 },
@@ -143,26 +146,28 @@
                 pay(orderId) {
                     axios.get('/order/pay', {params: {oid: orderId}})
                         .then(response => {
-                            if (response.data.code === 1) {
-                                this.$message.success(response.data.data);
+                            const result = response.data;
+                            if (result.code === 1) {
+                                this.$message.success(result.data);
                                 this.fetchOrders();
                             } else {
-                                this.$message.error(response.data.msg);
+                                this.$message.error(result.msg);
                             }
                         })
                         .catch(error => {
                             console.error('支付失败:', error);
-                            this.$message.error(response.data.data);
+                            this.$message.error(result.data);
                         });
                 },
                 cancelOrder(orderId) {
                     axios.get('/order/cancel', {params: {oid: orderId}})
                         .then(response => {
-                            if (response.data.code === 1) {
+                            const result = response.data;
+                            if (result.code === 1) {
                                 this.$message.success('订单已删除');
                                 this.fetchOrders();
                             } else {
-                                this.$message.error(response.data.msg);
+                                this.$message.error(result.msg);
                             }
                         })
                         .catch(error => {
@@ -173,11 +178,12 @@
                 confirmOrder(orderId) {
                     axios.get('/order/confirm', {params: {oid: orderId}})
                         .then(response => {
-                            if (response.data.code === 1) {
+                            const result = response.data;
+                            if (result.code === 1) {
                                 this.$message.success('订单已确认收货');
                                 this.fetchOrders();
                             } else {
-                                this.$message.error(response.data.msg);
+                                this.$message.error(result.msg);
                             }
                         })
                         .catch(error => {

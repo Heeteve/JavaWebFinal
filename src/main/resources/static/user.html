@@ -39,19 +39,19 @@
             </el-header>
 
             <el-main class="main-content">
-                <el-card class="user-info-card">
-                    <div class="clearfix" slot="header">
+                <el-card class="user-card">
+                    <div class="user-header" slot="header">
                         <span>用户信息</span>
-                        <el-button @click="dialogVisible = true" style="float: right" type="primary">编辑信息
+                        <el-button @click="dialogVisible = true" style="" type="primary">编辑信息
                         </el-button>
                     </div>
                     <div v-if="user">
                         <el-avatar icon="el-icon-user-solid"></el-avatar>
+                        <p><el-tag type="success" v-if="user.role === 1">管理员</el-tag></p>
                         <p><strong><i class="el-icon-user"></i></strong> {{ user.username }}</p>
                         <p><strong><i class="el-icon-mobile-phone"></i></strong> {{ user.tel }}</p>
                         <p><strong><i class="el-icon-location-outline"></i></strong> {{ user.address }}</p>
                         <p><strong><i class="el-icon-wallet"></i></strong>￥{{ user.balance.toFixed(2) }}</p>
-                        <p><el-tag type="success" v-if="user.role === 1">管理员</el-tag></p>
                     </div>
                     <div v-else>
                         <el-skeleton :loading="loading" animated>
@@ -70,7 +70,8 @@
                             <el-input v-model="editForm.username"></el-input>
                         </el-form-item>
                         <el-form-item label="密码">
-                            <el-input type="password" v-model="editForm.password"></el-input>
+                            <el-input type="password" v-model="editForm.password" placeholder="密码留空为不修改">
+                            </el-input>
                         </el-form-item>
                         <el-form-item label="联系方式">
                             <el-input v-model="editForm.tel"></el-input>
@@ -80,8 +81,8 @@
                         </el-form-item>
                     </el-form>
                     <div class="dialog-footer" slot="footer">
-                        <el-button @click="dialogVisible = false">取消</el-button>
-                        <el-button @click="submitEditForm" type="primary">提交</el-button>
+                        <el-button @click="dialogVisible = false" type="error">取消</el-button>
+                        <el-button @click="updateUser" type="primary">提交</el-button>
                     </div>
                 </el-dialog>
             </el-main>
@@ -90,21 +91,18 @@
     <script>
         new Vue({
             el: '#app',
-            data() {
-                return {
-                    activeIndex: '4',
-                    user: null,
-                    uid: 0,
-                    loading: true,
-                    dialogVisible: false,
-                    editForm: {
-                        username: '',
-                        password: '',
-                        tel: '',
-                        address: ''
-                    },
-                    defaultAvatar: 'https://example.com/default-avatar.png' // 默认头像链接
-                };
+            data: {
+                activeIndex: '4',
+                user: null,
+                uid: 0,
+                loading: true,
+                dialogVisible: false,
+                editForm: {
+                    username: '',
+                    password: '',
+                    tel: '',
+                    address: ''
+                },
             },
             created() {
                 this.uid = fetchUid();
@@ -128,21 +126,29 @@
                             this.loading = false;
                         });
                 },
-                submitEditForm() {
-                    axios.post(`/user/updateUser`, {...this.editForm, id: this.user.id})
+                updateUser() {
+                    
+                    // 构建 User 对象
+                    const user = {
+                        id: this.uid,
+                        username: this.editForm.username,
+                        password: this.editForm.password,
+                        tel: this.editForm.tel,
+                        address: this.editForm.address,
+                        balance: 0.0,
+                        role: 0
+                    };
+                    axios.post('/user/updateUser', user)
                         .then(response => {
-                            if (response.data.code === 1) {
-                                this.$message.success('用户信息更新成功');
-                                this.user = {...this.user, ...this.editForm, password: undefined};
+                            const result = response.data;
+                            if (result.code === 1) {
+                                this.$message.success('更新信息成功');
+                                this.fetchUser();
                                 this.dialogVisible = false;
                             } else {
-                                this.$message.error('用户信息更新失败');
+                                this.$message.error(result.msg);
                             }
                         })
-                        .catch(error => {
-                            console.error(error);
-                            this.$message.error('用户信息更新失败');
-                        });
                 },
                 navigateTo(route) {
                     window.location.href = route;

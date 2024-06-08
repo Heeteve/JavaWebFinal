@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
         // 检查是否已存在该用户
         if (userMapper.getUserIdByUsername(username) != null) {
             return false;
-        }else{
+        } else {
             User user = new User();
             user.setUsername(username);
             user.setPassword(password);
@@ -46,26 +47,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean updateUserInfo(User user) {
-        // 检查password是否为null
-        if (user.getPassword() == null) {
-            user.setPassword(userMapper.getUserById(user.getId()).getPassword());
+        // 检查password是否为空
+        if (Objects.equals(user.getPassword(), "")) {
+            String password = userMapper.getUserById(user.getId()).getPassword();
+            user.setPassword(password);
         }
-            
-        return null;
+        return userMapper.updateUser(user);
     }
 
     @Override
     public Boolean updatePassword(int id, String password) {
-        return null;
+        return true;
     }
 
     @Override
     public Boolean updateBalance(int id, double balance) {
-        return null;
+        return true;
     }
 
     @Override
     public Boolean deleteUser(int id) {
-        return null;
+        return true;
     }
 }

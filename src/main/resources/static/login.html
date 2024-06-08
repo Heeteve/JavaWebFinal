@@ -19,7 +19,7 @@
             <form>
                 <input type="text" placeholder="用户名" id="username" v-model="username" required >
                 <input type="password" placeholder="密码" id="password" v-model="password" required>
-                <button type="button" @click="login">Login</button>
+                <button type="button" id="login_button" @click="login">Login</button>
                 <button type="button" @click="register">sign in</button>
             </form>
     </div>
@@ -81,6 +81,13 @@
             effect.style.top = top +'px';
             effect.style.left = left +'px';
         })
+        
+        // 监听回车键执行login
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('login_button').click();
+            }
+        });
     </script>
 </body>
 

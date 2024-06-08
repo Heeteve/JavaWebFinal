@@ -9,8 +9,16 @@
 .order-card{
     margin-top: 20px;
 }
+
 .order-header {
     font-weight: bold;
+    margin: 0 5px;
+}
+
+.order-total{
+    font-weight: bold;
+    color: #f56c6c;
+    margin: 0 5px;
 }
 
 .order-actions {

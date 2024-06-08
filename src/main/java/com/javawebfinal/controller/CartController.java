@@ -37,9 +37,9 @@ public class CartController {
     public Result addCart(Integer uid, Integer pid) {
         log.info("CartController.addCart(uid {}, pid {})", uid, pid);
         if (cartService.addCart(uid, pid)) {
-            return Result.success("添加成功");
+            return Result.success("增加成功");
         } else {
-            return Result.error("添加失败");
+            return Result.error("增加失败");
         }
     }
 

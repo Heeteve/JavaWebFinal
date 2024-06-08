@@ -28,6 +28,12 @@ public interface CartService {
      */
     Boolean deleteCart(Integer userId, Integer productId);
 
+    /**
+     * 减少购物车商品数量
+     * @param uid
+     * @param pid
+     * @return Boolean
+     */
     Boolean reduceCart(Integer uid, Integer pid);
 
     /**

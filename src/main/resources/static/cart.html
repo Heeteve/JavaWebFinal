@@ -46,6 +46,7 @@
                                  prop="price"></el-table-column>
                 <el-table-column label="数量">
                     <template slot-scope="scope">
+                        <!-- 减少和增加按钮 -->
                         <el-button @click="updateQuantity(scope.row.product_id, 'reduce')" icon="el-icon-remove-outline"
                                    size="mini"></el-button>
                         <span>&nbsp{{ scope.row.quantity }}&nbsp</span>
