@@ -47,7 +47,7 @@ public class LoginController {
 
     @PostMapping("/register")
     public Result register(String username, String password, String tel, String address) {
-        log.info("User register " + username + " " + password + " " + tel + " " + address);
+        log.info("User register {} {} {}", username, tel, address);
         // 检查格式
         if (username == null || username.length() < 3 || username.length() > 20) {
             return Result.error("用户名长度应为3-20");

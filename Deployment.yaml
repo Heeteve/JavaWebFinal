@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hzyjavawebfinal
+  name: hzy-javawebfinal
   namespace: hzy
   labels:
-    app: hzyjavawebfinal
+    app: hzy-javawebfinal
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hzyjavawebfinal
+      app: hzy-javawebfinal
   template:
     metadata:
       labels:
-        app: hzyjavawebfinal
+        app: hzy-javawebfinal
     spec:
       containers:
-        - name: hzyjavawebfinal
+        - name: hzy-javawebfinal
           image: talangtuandui-docker.pkg.coding.net/hzyjavaweb/main/hzyjavawebfinal:develop
           imagePullPolicy: Always
           ports:

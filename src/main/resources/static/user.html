@@ -111,12 +111,6 @@
                 this.fetchUser();
             },
             methods: {
-                logout() {
-                    localStorage.removeItem('jwtToken');
-                    // 清除cookie
-                    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    window.location.href = 'login.html';
-                },
                 fetchUser() {
                     axios.get(`/user/getUser`, {params: {uid: this.uid}})
                         .then(response => {
@@ -152,7 +146,8 @@
                 },
                 navigateTo(route) {
                     window.location.href = route;
-                }
+                },
+                logout: logout
             }
         });
     </script>

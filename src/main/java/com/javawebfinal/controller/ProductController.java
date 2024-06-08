@@ -24,7 +24,7 @@ public class ProductController {
     @ResponseBody
     @GetMapping("/getProduct")
     public Result page(Integer page, Integer size){
-        log.info("ProductController.page() " + page + " " + size);
+        log.info("ProductController.page(page {},size {})", page, size);
         PageBean pageBean = productService.page(page, size);
         return Result.success(pageBean);
     }

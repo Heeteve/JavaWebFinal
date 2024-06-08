@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Controller
 @RequestMapping("/user")
-public class UserCrontroller {
+public class UserController {
     @Autowired
     private UserService userService;
 
@@ -27,7 +27,7 @@ public class UserCrontroller {
     @ResponseBody
     @GetMapping("/getUser")
     public Result getUser(Integer uid) {
-        log.info("UserCrontroller.getUser() " + uid);
+        log.info("UserController.getUser(uid {})", uid);
         User user = userService.getSelf(uid);
         user.setPassword(null);
         return Result.success(user);

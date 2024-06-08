@@ -39,7 +39,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping("/getOrder")
     public Result getOrder(Integer uid) {
-        log.info("OrderController.getOrder() " + uid);
+        log.info("OrderController.getOrder(uid {}) ", uid);
         return Result.success(orderService.getOrder(uid));
     }
     

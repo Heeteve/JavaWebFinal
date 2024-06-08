@@ -1,17 +1,37 @@
 // JWT解码
 function jwtParser(token) {
-    const base64 = token.split('.')[1];
-    const base64r = base64.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(decodeURIComponent(atob(base64r)));
+    let base64 = token.split('.')[1];
+    base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(atob(base64)));
 }
 
 function fetchUid() {
-    const jwt = localStorage.getItem('jwt');
+    // const jwt = localStorage.getItem('jwt');
+    // 获取jwt
+    const jwt = getCookie('jwt');
     if (jwt) {
-        let userinfo = jwtParser(jwt);
+        const userinfo = jwtParser(jwt);
         console.log(userinfo);
         return userinfo.id;
     } else {
         return 0;
     }
+}
+
+function getCookie(cookieName) {
+    const strCookie = document.cookie
+    const cookieList = strCookie.split(';')
+    for (let i = 0; i < cookieList.length; i++) {
+        const arr = cookieList[i].split('=')
+        if (cookieName === arr[0].trim()) {
+            return arr[1]
+        }
+    }
+    return ''
+}
+
+function logout(){
+    // 清除jwt
+    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    window.location.href = 'login.html';
 }

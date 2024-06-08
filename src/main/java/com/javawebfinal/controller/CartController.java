@@ -27,7 +27,7 @@ public class CartController {
     @ResponseBody
     @GetMapping("/getCart")
     public Result getCart(Integer uid) {
-        log.info("CartController.getCart() " + uid);
+        log.info("CartController.getCart(uid {})", uid);
         List<CartVO> cartList = cartService.getCart(uid);
         return Result.success(cartList);
     }
@@ -35,7 +35,7 @@ public class CartController {
     @ResponseBody
     @GetMapping("/addCart")
     public Result addCart(Integer uid, Integer pid) {
-        log.info("CartController.addCart() " + uid + " " + pid);
+        log.info("CartController.addCart(uid {}, pid {})", uid, pid);
         if (cartService.addCart(uid, pid)) {
             return Result.success("添加成功");
         } else {
@@ -46,7 +46,7 @@ public class CartController {
     @ResponseBody
     @GetMapping("/reduceCart")
     public Result reduceCart(Integer uid, Integer pid) {
-        log.info("CartController.reduceCart() " + uid + " " + pid);
+        log.info("CartController.reduceCart(uid {}, pid {})", uid, pid);
         if (cartService.reduceCart(uid, pid)) {
             return Result.success("减少成功");
         } else {
@@ -57,7 +57,7 @@ public class CartController {
     @ResponseBody
     @GetMapping("/clearCart")
     public Result deleteCart(Integer uid) {
-        log.info("CartController.clearCart() " + uid);
+        log.info("CartController.clearCart(uid {}) ", uid);
         if (cartService.clearCart(uid)) {
             return Result.success("删除成功");
         } else {
