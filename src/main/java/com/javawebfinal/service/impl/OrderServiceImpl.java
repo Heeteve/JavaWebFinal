@@ -24,8 +24,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderVO> getOrder(Integer user_id) {
-        return orderMapper.listOrdersByUId(user_id);
+    public List<OrderVO> getOrder() {
+        return orderMapper.listOrder();
+    }
+
+    @Override
+    public List<OrderVO> getOrderByUId(Integer user_id) {
+        return orderMapper.listOrderByUId(user_id);
     }
 
     @Override
@@ -33,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
         // 检查余额
         int uid = orderMapper.getUidByOid(order_id);
         double balance = userMapper.getBalanceByUid(uid);
-        List<OrderVO> orderList = orderMapper.listOrdersByUId(uid);
+        List<OrderVO> orderList = orderMapper.listOrderByUId(uid);
         for (OrderVO order : orderList) {
             balance -= order.getPrice() * order.getQuantity();
         }

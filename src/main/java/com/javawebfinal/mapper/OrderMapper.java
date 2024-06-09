@@ -8,13 +8,13 @@ import java.util.List;
 
 @Mapper
 public interface OrderMapper {
-    // 查询订单列表
-    @Select("SELECT * FROM fi_order WHERE order_id = #{order_id}")
-    List<Order> listOrder(String order_id);
-    
     // 查询订单信息列表
-    @Select("SELECT o.order_id, o.user_id, o.product_id, o.quantity, p.brand, p.model, p.price, p.image, o.status, o.order_time FROM fi_order o JOIN fi_product p ON o.product_id = p.id WHERE user_id = #{user_id}")
-    List<OrderVO> listOrdersByUId(int user_id);
+    @Select("SELECT o.order_id, o.user_id, o.product_id, o.quantity, u.username, u.tel, u.address, p.brand, p.model, p.price, p.image, o.status, o.order_time FROM fi_order o JOIN fi_product p ON o.product_id = p.id JOIN fi_user u ON o.user_id = u.id")
+    List<OrderVO> listOrder();
+    
+    // 通过uid查询订单信息列表
+    @Select("SELECT o.order_id, o.user_id, o.product_id, o.quantity, u.username, u.tel, u.address, p.brand, p.model, p.price, p.image, o.status, o.order_time FROM fi_order o JOIN fi_product p ON o.product_id = p.id JOIN fi_user u ON o.user_id = u.id WHERE user_id = #{user_id}")
+    List<OrderVO> listOrderByUId(int user_id);
     
     // 通过uid查找购物车，加入订单
     @Insert("INSERT INTO fi_order (order_id, user_id, product_id, quantity) SELECT #{order_id}, #{user_id}, product_id, quantity FROM fi_cart WHERE user_id = #{user_id}")

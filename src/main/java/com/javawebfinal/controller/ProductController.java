@@ -23,17 +23,17 @@ public class ProductController {
         return "product";
     }
     
+    @RequestMapping("/admin")
+    public String admin() {
+        return "product-admin";
+    }
+    
     @ResponseBody
     @GetMapping("/getProduct")
     public Result page(Integer page, Integer size){
         log.info("ProductController.page(page {},size {})", page, size);
         PageBean pageBean = productService.page(page, size);
         return Result.success(pageBean);
-    }
-
-    @RequestMapping("/admin")
-    public String admin() {
-        return "product-admin";
     }
     
     @ResponseBody

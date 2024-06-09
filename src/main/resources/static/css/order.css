@@ -10,7 +10,7 @@
     margin-top: 20px;
 }
 
-.order-header {
+.order-id {
     font-weight: bold;
     margin: 0 5px;
 }
@@ -21,7 +21,7 @@
     margin: 0 5px;
 }
 
-.order-actions {
+.info2 {
     display: flex;
     align-items: center;
     gap: 10px;

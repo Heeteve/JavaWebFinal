@@ -24,6 +24,11 @@ public class OrderController {
         return "order";
     }
 
+    @RequestMapping("/admin")
+    public String admin() {
+        return "order-admin";
+    }
+
     @ResponseBody
     @RequestMapping("/addOrder")
     public Result addOrder(Integer uid) {
@@ -40,9 +45,16 @@ public class OrderController {
     @RequestMapping("/getOrder")
     public Result getOrder(Integer uid) {
         log.info("OrderController.getOrder(uid {})", uid);
-        return Result.success(orderService.getOrder(uid));
+        return Result.success(orderService.getOrderByUId(uid));
     }
 
+    @ResponseBody
+    @RequestMapping("/admin/getOrder")
+    public Result getAllOrder() {
+        log.info("OrderController.getAllOrder()");
+        return Result.success(orderService.getOrder());
+    }
+    
     @ResponseBody
     @RequestMapping("/pay")
     public Result pay(String oid) {
@@ -72,7 +84,7 @@ public class OrderController {
     @ResponseBody
     @RequestMapping("/deliver")
     public Result deliver(String oid) {
-        log.info("OrderController.deliver(oid {})",oid);
+        log.info("OrderController.deliver(oid {})", oid);
         if (orderService.deliverOrder(oid)) {
             return Result.success("订单" + oid + "已发货");
         } else {
@@ -90,7 +102,7 @@ public class OrderController {
             return Result.error("操作失败");
         }
     }
-    
+
     @ResponseBody
     @RequestMapping("/delete")
     public Result delete(String oid) {

@@ -14,11 +14,18 @@ public interface OrderService {
 
     /**
      * 获取所有订单
+     *
+     * @return List<OrderVO>
+     */
+    List<OrderVO> getOrder();
+    
+    /**
+     * 通过Uid获取所有订单
      * @param user_id
      * @return List<OrderVO>
      */
-    List<OrderVO> getOrder(Integer user_id);
-
+    List<OrderVO> getOrderByUId(Integer user_id);
+    
     /**
      * 支付订单
      *

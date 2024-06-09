@@ -17,7 +17,7 @@
         <el-header class="header">
             <el-row align="middle" justify="space-between" type="flex">
                 <el-col>
-                    <el-menu :default-active="activeIndex" mode="horizontal"
+                    <el-menu :default-active="'2'" mode="horizontal"
                              style="background-color: rgba(255, 255, 255, 0.2)">
                         <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表</el-menu-item>
                         <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车</el-menu-item>
@@ -75,7 +75,6 @@
         new Vue({
             el: '#app',
             data: {
-                activeIndex: '2',
                 uid: 0,
                 cart: [],
                 total: 0

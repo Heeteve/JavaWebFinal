@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>商城 - 管理员</title>
+    <title>产品管理 - 商城</title>
     <script src="/import/vue.js"></script>
     <script src="/import/axios.min.js"></script>
     <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
@@ -18,13 +18,13 @@
             <el-header class="header">
                 <el-row align="middle" justify="space-between" type="flex">
                     <el-col>
-                        <el-menu :default-active="activeIndex" mode="horizontal"
+                        <el-menu :default-active="'1'" mode="horizontal"
                                  style="background-color: rgba(255, 255, 255, 0.2)">
                             <el-menu-item @click="navigateTo('/product/admin')" index="1"><i class="el-icon-goods"></i>商品管理
                             </el-menu-item>
-                            <el-menu-item @click="navigateTo('/order')" index="2"><i class="el-icon-files"></i>订单管理
+                            <el-menu-item @click="navigateTo('/order/admin')" index="2"><i class="el-icon-files"></i>订单管理
                             </el-menu-item>
-                            <el-menu-item @click="navigateTo('/user')" index="3"><i class="el-icon-user"></i>个人信息
+                            <el-menu-item @click="navigateTo('/user/admin')" index="3"><i class="el-icon-user"></i>用户管理
                             </el-menu-item>
                             <el-menu-item style="float: right">
                                 <el-col>
@@ -70,12 +70,12 @@
                                 {{ scope.row.isEditing ? '保存' : '编辑' }}
                             </el-button>
                             <el-button @click="scope.row.isEditing = false" size="mini" type="info"
-                                       v-if="scope.row.isEditing">取消
+                                       v-if="scope.row.isEditing" style="margin-left: 0">取消
                             </el-button>
                             <el-popconfirm @confirm="deleteProduct(scope.row.id)"
                                            title="确认删除该商品？"
                                            icon="el-icon-info" icon-color="red">
-                                <el-button size="mini" slot="reference" type="danger">删除</el-button>
+                                <el-button size="mini" slot="reference" type="danger" v-if="!scope.row.isEditing">删除</el-button>
                             </el-popconfirm>
                         </template>
                     </el-table-column>
@@ -119,7 +119,6 @@
             el: '#app',
             data: {
                 uid: '0',
-                activeIndex: '1',
                 products: [],
                 newProduct: {
                     brand: '',

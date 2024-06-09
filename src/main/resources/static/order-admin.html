@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>订单列表 - 商城</title>
-    <script src="import/vue.js"></script>
-    <script src="import/axios.min.js"></script>
+    <title>商城 - 订单管理</title>
+    <script src="/import/vue.js"></script>
+    <script src="/import/axios.min.js"></script>
     <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-    <script src="js/main.js"></script>
-    <link href="css/main.css" rel="stylesheet">
-    <link href="css/order.css" rel="stylesheet">
+    <script src="/js/main.js"></script>
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/order-admin.css" rel="stylesheet">
 
 </head>
 <body>
@@ -17,15 +17,13 @@
         <el-header class="header">
             <el-row align="middle" justify="space-between" type="flex">
                 <el-col>
-                    <el-menu :default-active="'3'" mode="horizontal"
+                    <el-menu :default-active="'2'" mode="horizontal"
                              style="background-color: rgba(255, 255, 255, 0.2)">
-                        <el-menu-item @click="navigateTo('/product')" index="1"><i class="el-icon-goods"></i>商品列表
+                        <el-menu-item @click="navigateTo('/product/admin')" index="1"><i class="el-icon-goods"></i>商品管理
                         </el-menu-item>
-                        <el-menu-item @click="navigateTo('/cart')" index="2"><i class="el-icon-shopping-cart-2"></i>购物车
+                        <el-menu-item @click="navigateTo('/order/admin')" index="2"><i class="el-icon-files"></i>订单管理
                         </el-menu-item>
-                        <el-menu-item @click="navigateTo('/order')" index="3"><i class="el-icon-files"></i>订单管理
-                        </el-menu-item>
-                        <el-menu-item @click="navigateTo('/user')" index="4"><i class="el-icon-user"></i>个人信息
+                        <el-menu-item @click="navigateTo('/user/admin')" index="3"><i class="el-icon-user"></i>用户管理
                         </el-menu-item>
                         <el-menu-item style="float: right">
                             <el-col>
@@ -38,36 +36,63 @@
         </el-header>
 
         <el-main class="main-content">
-            <div :key="order.order_id" v-for="(order, index) in orders">
+            <el-dropdown @command="handleCommand">
+                <div class="el-dropdown-link">
+                    筛选订单状态
+                    <i class="el-icon-arrow-down el-icon--right"></i>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="all">全部订单</el-dropdown-item>
+                    <el-dropdown-item command="0">未支付</el-dropdown-item>
+                    <el-dropdown-item command="1">待发货</el-dropdown-item>
+                    <el-dropdown-item command="2">已发货</el-dropdown-item>
+                    <el-dropdown-item command="3">已收货</el-dropdown-item>
+                    <el-dropdown-item command="4">已取消</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+
+            <div :key="order.order_id" v-for="order in filteredOrders">
                 <el-card class="order-card" shadow="hover">
                     <div class="order-info">
-                        <div>
-                            <span class="order-header">订单号: {{ order.order_id }}</span>
-                            <span class="order-total">{{ formatCurrency(order.total) }}</span>
+                        <div class="info1">
                             <el-tag :type="getStatusType(order.status)">{{ getStatusText(order.status) }}</el-tag>
+                            <span class="order-id">订单号: {{ order.order_id }}</span>
+                            <span class="order-total">{{ formatCurrency(order.total) }}</span>
+                            <span class="order-time">下单时间: {{ order.order_time }}</span>
                         </div>
-                        <div class="order-actions">
-                            <span style="margin-right: 5px; color: #606266">下单时间: {{order.order_time}}
-                            </span>
-                            <el-button @click="pay(order.order_id)" icon="el-icon-bank-card" plain
-                                       type="success" v-if="order.status === 0">确认支付
-                            </el-button>
-                            <el-button @click="cancelOrder(order.order_id)" icon="el-icon-circle-close" plain
-                                       type="danger" v-if="order.status === 0||order.status === 1">取消订单
-                            </el-button>
-                            <el-button @click="confirmOrder(order.order_id)" icon="el-icon-box" plain
-                                       type="success" v-if="order.status === 2">确认收货
-                            </el-button>
-                            <el-button @click="deleteOrder(order.order_id)" icon="el-icon-delete" plain
-                                       type="danger" v-if="order.status === 3||order.status === 4">删除订单
-                            </el-button>
+                        <div class="info2">
+                            <span class="order-userinfo"><b>用户名:</b> {{ order.username }}</span>
+                            <span class="order-userinfo"><b>联系方式:</b> {{ order.tel }}</span>
+                            <span class="order-userinfo"><b>地址:</b> {{ order.address }}</span>
+                            <div class="order-operation">
+                                <el-popconfirm @click="deliverOrder(order.order_id)"
+                                               icon="el-icon-info" title="确定发货？"
+                                               v-if="order.status === 1">
+                                    <el-button icon="el-icon-box" plain size="mini" slot="reference"
+                                               style="margin-right:5px" type="success">发货
+                                    </el-button>
+                                </el-popconfirm>
+                                <el-popconfirm @click="cancelOrder(order.order_id)"
+                                               icon="el-icon-info" icon-color="red" title="确定取消订单？"
+                                               v-if="order.status === 0 || order.status === 1">
+                                    <el-button icon="el-icon-delete" plain size="mini" slot="reference"
+                                               type="danger"></el-button>
+                                </el-popconfirm>
+                                <el-popconfirm @click="deleteOrder(order.order_id)"
+                                               icon="el-icon-info" icon-color="red" title="确定删除订单？"
+                                               v-if="order.status === 4">
+                                    <el-button icon="el-icon-delete" plain size="mini" slot="reference"
+                                               type="danger"></el-button>
+                                </el-popconfirm>
+                            </div>
                         </div>
                     </div>
+                    
                     <el-table :data="order.products" style="width: 100%">
-                        <el-table-column label="商品图片">
-                            <template slot-scope="scope">
-                                <img :src="scope.row.image" alt="Product Image" class="product-image">
-                            </template>
+                        <el-table-column label="商品编号" prop="product_id" width="120px">
+                            <!--<template slot-scope="scope">-->
+                            <!--<img :src="scope.row.image" alt="Product Image" class="product-image">-->
+                            <!--</template>-->
                         </el-table-column>
                         <el-table-column label="商品名称" prop="product_name"></el-table-column>
                         <el-table-column :formatter="(row) => formatCurrency(row.price)" label="单价"
@@ -84,8 +109,16 @@
             el: '#app',
             data: {
                 uid: 0,
-                order: null,
                 orders: [],
+                filterStatus: 'all',
+            },
+            computed: {
+                filteredOrders() {
+                    if (this.filterStatus === 'all') {
+                        return this.orders;
+                    }
+                    return this.orders.filter(order => order.status === parseInt(this.filterStatus));
+                }
             },
             created() {
                 this.uid = fetchUid();
@@ -93,7 +126,7 @@
             },
             methods: {
                 fetchOrders() {
-                    axios.get('/order/getOrder', {params: {uid: this.uid}})
+                    axios.get('/order/admin/getOrder', {params: {uid: this.uid}})
                         .then(response => {
                             const result = response.data;
                             if (result.code === 1) {
@@ -107,20 +140,24 @@
                             this.$message.error('获取订单失败');
                         });
                 },
-                separateOrders(data) { // 将订单数据按订单号分组
+                separateOrders(data) {
                     const ordersMap = new Map();
                     data.forEach(item => {
                         if (!ordersMap.has(item.order_id)) {
                             ordersMap.set(item.order_id, {
                                 order_id: item.order_id,
                                 order_time: item.order_time,
-                                status: item.status, // 0：未支付，1：已支付，2：已发货，3：已收货
+                                status: item.status,
                                 total: 0.0,
+                                username: item.username,
+                                tel: item.tel,
+                                address: item.address,
                                 products: []
                             });
                         }
-                        order = ordersMap.get(item.order_id);
+                        const order = ordersMap.get(item.order_id);
                         order.products.push({
+                            product_id: item.product_id,
                             product_name: `${item.brand} ${item.model}`,
                             image: item.image,
                             price: item.price,
@@ -142,6 +179,8 @@
                             return 'info';
                         case 4:
                             return 'danger';
+                        default:
+                            return '';
                     }
                 },
                 getStatusText(status) {
@@ -149,38 +188,34 @@
                         case 0:
                             return '未支付';
                         case 1:
-                            return '已支付，等待发货';
+                            return '待发货';
                         case 2:
                             return '已发货';
                         case 3:
-                            return '已签收';
+                            return '已收货';
                         case 4:
                             return '已取消';
+                        default:
+                            return '未知状态';
                     }
                 },
                 formatCurrency(value) {
-                    return '¥' + value;
+                    return '¥' + value.toFixed(2);
                 },
-                pay(orderId) {
-                    axios.get('/order/pay', {params: {oid: orderId}})
+                deliverOrder(orderId) {
+                    axios.get('/order/deliver', {params: {oid: orderId}})
                         .then(response => {
                             const result = response.data;
                             if (result.code === 1) {
-                                // this.$message.success(result.data);
-                                this.$message({
-                                    message: result.data,
-                                    type: 'success',
-                                    showClose: true,
-                                    duration: 5000,
-                                })
+                                this.$message.success('订单已发货');
                                 this.fetchOrders();
                             } else {
                                 this.$message.error(result.msg);
                             }
                         })
                         .catch(error => {
-                            console.error('支付失败:', error);
-                            this.$message.error(result.data);
+                            console.error('发货失败:', error);
+                            this.$message.error('发货失败');
                         });
                 },
                 cancelOrder(orderId) {
@@ -188,31 +223,15 @@
                         .then(response => {
                             const result = response.data;
                             if (result.code === 1) {
-                                this.$message.success('订单已删除');
+                                this.$message.success('订单已取消');
                                 this.fetchOrders();
                             } else {
                                 this.$message.error(result.msg);
                             }
                         })
                         .catch(error => {
-                            console.error('取消失败:', error);
-                            this.$message.error('取消失败');
-                        });
-                },
-                confirmOrder(orderId) {
-                    axios.get('/order/confirm', {params: {oid: orderId}})
-                        .then(response => {
-                            const result = response.data;
-                            if (result.code === 1) {
-                                this.$message.success('订单已确认收货');
-                                this.fetchOrders();
-                            } else {
-                                this.$message.error(result.msg);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('确认收货失败:', error);
-                            this.$message.error('确认收货失败');
+                            console.error('取消订单失败:', error);
+                            this.$message.error('取消订单失败');
                         });
                 },
                 deleteOrder(orderId) {
@@ -227,9 +246,12 @@
                             }
                         })
                         .catch(error => {
-                            console.error('删除失败:', error);
-                            this.$message.error('删除失败');
+                            console.error('删除订单失败:', error);
+                            this.$message.error('删除订单失败');
                         });
+                },
+                handleCommand(command) {
+                    this.filterStatus = command;
                 },
                 navigateTo(path) {
                     window.location.href = path;
