@@ -16,14 +16,6 @@ public interface OrderMapper {
     @Select("SELECT o.order_id, o.user_id, o.product_id, o.quantity, p.brand, p.model, p.price, p.image, o.status, o.order_time FROM fi_order o JOIN fi_product p ON o.product_id = p.id WHERE user_id = #{user_id}")
     List<OrderVO> listOrdersByUId(int user_id);
     
-    /*
-    // 添加订单
-    @Insert("INSERT INTO fi_order (order_id, user_id, product_id, quantity) " +
-            "VALUES (#{order_id}, #{user_id}, #{product_id}, #{quantity})")
-    @Options(useGeneratedKeys = true, keyProperty = "id, status, order_time")
-    Boolean addOrder(String order_id, int user_id, int product_id, int quantity);
-    */
-    
     // 通过uid查找购物车，加入订单
     @Insert("INSERT INTO fi_order (order_id, user_id, product_id, quantity) SELECT #{order_id}, #{user_id}, product_id, quantity FROM fi_cart WHERE user_id = #{user_id}")
     @Options(useGeneratedKeys = true, keyProperty = "id, status, order_time")
@@ -35,7 +27,7 @@ public interface OrderMapper {
     
     // 删除订单
     @Delete("DELETE FROM fi_order WHERE order_id = #{order_id}")
-    Boolean deleteOrder(String order_id);
+    Boolean deleteOrderByOId(String order_id);
     
     // 通过oid查询uid
     @Select("SELECT user_id FROM fi_order WHERE order_id = #{order_id} LIMIT 1")

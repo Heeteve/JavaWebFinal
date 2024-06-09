@@ -28,11 +28,11 @@ public interface OrderService {
     Double pay(String order_id);
     
     /**
-     * 取消订单
+     * 发货
      * @param order_id
      * @return Boolean
      */
-    Boolean cancelOrder(String order_id);
+    Boolean deliverOrder(String order_id);
     
     /**
      * 确认收货
@@ -40,4 +40,19 @@ public interface OrderService {
      * @return Boolean
      */
     Boolean confirmOrder(String order_id);
+
+    /**
+     * 取消订单
+     *
+     * @param order_id
+     * @return Boolean
+     */
+    Boolean cancelOrder(String order_id);
+    
+    /**
+     * 删除订单
+     * @param order_id
+     * @return Boolean
+     */
+    Boolean deleteOrder(String order_id);
 }

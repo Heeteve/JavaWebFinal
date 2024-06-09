@@ -45,14 +45,24 @@ public class OrderServiceImpl implements OrderService {
             return balance; // 支付成功
         }
     }
-
+    
+    @Override
+    public Boolean deliverOrder(String order_id) {
+        return orderMapper.updateOrderStatus(order_id, 2);
+    }
+    
+    @Override
+    public Boolean confirmOrder(String order_id) {
+        return orderMapper.updateOrderStatus(order_id, 3);
+    }
+    
     @Override
     public Boolean cancelOrder(String order_id) {
-        return orderMapper.deleteOrder(order_id);
+        return orderMapper.updateOrderStatus(order_id, 4);
     }
 
     @Override
-    public Boolean confirmOrder(String order_id) {
-        return orderMapper.updateOrderStatus(order_id, 2);
+    public Boolean deleteOrder(String order_id) {
+        return orderMapper.deleteOrderByOId(order_id);
     }
 }
