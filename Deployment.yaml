@@ -8,7 +8,9 @@ metadata:
   annotations:
     kubesphere.io/description: '10.180.244.15:30080/login.html'
 spec:
-  replicas: 1
+  strategy:
+    type: RollingUpdate
+  replicas: 2
   selector:
     matchLabels:
       app: hzy-javawebfinal
