@@ -9,7 +9,6 @@ function fetchUid() {
     const jwt = getCookie('jwt');
     if (jwt) {
         const userinfo = jwtParser(jwt);
-        console.log(userinfo);
         return userinfo.id;
     } else {
         return 0;
@@ -20,7 +19,6 @@ function fetchRole() {
     const jwt = getCookie('jwt');
     if (jwt) {
         const userinfo = jwtParser(jwt);
-        console.log(userinfo);
         return userinfo.role;
     } else {
         return 0;

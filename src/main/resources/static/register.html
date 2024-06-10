@@ -52,7 +52,6 @@
                             const result = response.data;
                             if (result.code === 1) {
                                 this.$message.success('注册成功');
-                                console.log(response.data);
                                 window.location.href = 'login.html';
                             } else {
                                 this.$message.error(result.msg);
