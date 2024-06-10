@@ -1,5 +1,6 @@
 package com.javawebfinal.config;
 
+import com.javawebfinal.interceptor.AdminInterceptor;
 import com.javawebfinal.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +13,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
+    @Autowired
+    private AdminInterceptor adminInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/error", "/login*", "/register*", "/favicon.ico", "/import/**", "/js/**", "/css/**", "/img/**");
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/*/admin/**")
+                .excludePathPatterns("/error", "/login*", "/register*", "/favicon.ico", "/import/**", "/js/**", "/css/**", "/img/**");
     }
+
 }
