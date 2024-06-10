@@ -23,9 +23,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(String username, String password, HttpServletResponse resp) {
-        log.info("User login {}" ,username);
+        log.info("User login: {}" ,username);
         User user = userService.login(username, password);
-        log.info("user logged in: {}", user);
         if (user != null) {
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", user.getId());
@@ -39,6 +38,7 @@ public class LoginController {
             cookie.setMaxAge(3600*24);
             resp.addCookie(cookie);
             
+            log.info("User logged in: {}", user.getUsername());
             return Result.success(jwt);
         } else {
             return Result.error("用户名或密码错误");

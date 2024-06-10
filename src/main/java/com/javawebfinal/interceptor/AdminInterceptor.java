@@ -16,7 +16,6 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object handler) throws Exception {
         String url = req.getRequestURL().toString();
-        //log.info("请求url: {}", url);
         // 获取Cookie
         Cookie[] cookies = req.getCookies();
         String jwt = null;
@@ -42,7 +41,6 @@ public class AdminInterceptor implements HandlerInterceptor {
         // 解析jwt，如果解析失败，返回错误结果（未登录）。
         try {
             JwtUtils.parseJWT(jwt);
-            log.info("###：{}", jwt);
             // base64解析
             String[] split = jwt.split("\\.");
             String payload = new String(java.util.Base64.getDecoder().decode(split[1]));

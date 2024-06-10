@@ -68,7 +68,6 @@ public class UserController {
         log.info("UserController.getUserAdmin()");
         List<User> userList = userService.listAll();
         userList.forEach(user -> user.setPassword(null));
-        log.info(userList.toString());
         return Result.success(userList);
     }
     
