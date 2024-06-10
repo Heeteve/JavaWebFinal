@@ -72,13 +72,13 @@
                                                style="margin-right:5px" type="success">发货
                                     </el-button>
                                 </el-popconfirm>
-                                <el-popconfirm @click="cancelOrder(order.order_id)"
+                                <el-popconfirm @confirm="cancelOrder(order.order_id)"
                                                icon="el-icon-info" icon-color="red" title="确定取消订单？"
                                                v-if="order.status === 0 || order.status === 1">
                                     <el-button icon="el-icon-delete" plain size="mini" slot="reference"
                                                type="danger"></el-button>
                                 </el-popconfirm>
-                                <el-popconfirm @click="deleteOrder(order.order_id)"
+                                <el-popconfirm @confirm="deleteOrder(order.order_id)"
                                                icon="el-icon-info" icon-color="red" title="确定删除订单？"
                                                v-if="order.status === 4">
                                     <el-button icon="el-icon-delete" plain size="mini" slot="reference"
