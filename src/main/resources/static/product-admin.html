@@ -128,16 +128,12 @@
                 }
             },
             created() {
-                this.uid = this.fetchUid();
+                this.uid = fetchUid();
                 this.fetchProducts();
             },
             methods: {
                 navigateTo(path) {
                     window.location.href = path;
-                },
-                fetchUid() {
-                    // Mock function to fetch user ID
-                    return 1;
                 },
                 fetchProducts() {
                     axios.get('/product/admin/getProduct', {}).then(response => {

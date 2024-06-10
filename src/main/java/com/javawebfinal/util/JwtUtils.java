@@ -9,7 +9,7 @@ import java.util.Map;
 public class JwtUtils {
 
     private static final String signKey = "heeteveee";
-    private static Long expire = 43200000L;
+    private static Long expire = 43200000L; // 到期时长12小时
 
     /**
      * 生成JWT令牌

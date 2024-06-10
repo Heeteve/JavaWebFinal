@@ -112,10 +112,11 @@
                     axios.get(`/user/getUser`, {params: {uid: this.uid}})
                         .then(response => {
                             if (response.data.code === 1) {
-                                this.user = response.data.data;
+                                const result = response.data;
+                                this.user = result.data;
                                 this.editForm = {...this.user, password: ''}; // 初始化编辑表单
                             } else {
-                                this.$message.error('获取用户信息失败');
+                                this.$message.error(result.msg);
                             }
                             this.loading = false;
                         })
@@ -141,7 +142,7 @@
                         .then(response => {
                             const result = response.data;
                             if (result.code === 1) {
-                                this.$message.success('更新信息成功');
+                                this.$message.success(result.data);
                                 this.fetchUser();
                                 this.dialogVisible = false;
                             } else {

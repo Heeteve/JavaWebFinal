@@ -7,7 +7,6 @@ import java.util.List;
 
 @Mapper
 public interface CartMapper {
-
     // 查询购物车ByUId
     @Select("SELECT c.id, c.user_id, c.product_id, c.quantity, p.brand, p.model, p.price, p.image FROM fi_cart c JOIN fi_product p ON c.product_id = p.id WHERE user_id = #{user_id}")
     List<CartVO> listCartByUId(int user_id);

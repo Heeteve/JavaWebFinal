@@ -56,17 +56,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean updatePassword(int id, String password) {
-        return true;
+    public Boolean updateUserInfoAdmin(User user) {
+        // 检查password是否为空
+        if (Objects.equals(user.getPassword(), "")) {
+            String password = userMapper.getUserById(user.getId()).getPassword();
+            user.setPassword(password);
+        }
+        return userMapper.updateUserAdmin(user);
     }
 
     @Override
-    public Boolean updateBalance(int id, double balance) {
-        return true;
+    public Boolean updatePassword(int id, String password) {
+        return false;
     }
 
     @Override
     public Boolean deleteUser(int id) {
-        return true;
+        return userMapper.deleteUser(id);
+    }
+
+    @Override
+    public Boolean addUser(User user) {
+        // 检查是否已存在该用户
+        if (userMapper.getUserIdByUsername(user.getUsername()) != null) {
+            return false;
+        }
+        return userMapper.AddUser(user);
     }
 }

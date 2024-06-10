@@ -2,9 +2,224 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>商城 - 用户管理</title>
+    <script src="/import/vue.js"></script>
+    <script src="/import/axios.min.js"></script>
+    <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="/js/main.js"></script>
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/user-admin.css" rel="stylesheet">
 </head>
-<body>
 
+<body>
+    <div id="app">
+        <el-header class="header">
+            <el-row align="middle" justify="space-between" type="flex">
+                <el-col>
+                    <el-menu :default-active="'3'" mode="horizontal"
+                             style="background-color: rgba(255, 255, 255, 0.2)">
+                        <el-menu-item @click="navigateTo('/product/admin')" index="1"><i class="el-icon-goods"></i>商品管理
+                        </el-menu-item>
+                        <el-menu-item @click="navigateTo('/order/admin')" index="2"><i class="el-icon-files"></i>订单管理
+                        </el-menu-item>
+                        <el-menu-item @click="navigateTo('/user/admin')" index="3"><i class="el-icon-user"></i>用户管理
+                        </el-menu-item>
+                        <el-menu-item style="float: right">
+                            <el-col>
+                                <el-button @click="logout" plain type="danger">退出登录</el-button>
+                            </el-col>
+                        </el-menu-item>
+                    </el-menu>
+                </el-col>
+            </el-row>
+        </el-header>
+
+        <el-main class="main-content">
+            <el-table :data="users" style="width: 100%">
+                <el-table-column label="UID" width="50" prop="id" align="center"></el-table-column>
+                <el-table-column label="用户名" prop="username"></el-table-column>
+                <el-table-column label="余额" prop="balance"></el-table-column>
+                <el-table-column label="联系方式" prop="tel"></el-table-column>
+                <el-table-column label="地址" min-width="150px" prop="address"></el-table-column>
+                <el-table-column label="角色">
+                    <template slot-scope="scope">
+                        <el-tag type="info" v-if="scope.row.role === 0">用户</el-tag>
+                        <el-tag type="success" v-if="scope.row.role === 1">管理员</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button @click="editUser(scope.row)" icon="el-icon-edit-outline" plain size="mini"
+                                   type="primary"></el-button>
+                        <el-button @click="deleteUser(scope.row.id)" icon="el-icon-delete" plain size="mini"
+                                   type="danger"></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <el-collapse>
+                <el-collapse-item name="1" title="添加用户">
+                    <el-table :data="[newUser]" style="width: 100%">
+                        <el-table-column width="50"></el-table-column>
+                        <el-table-column label="用户名">
+                            <template slot-scope="scope">
+                                <el-input v-model="newUser.username"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="密码">
+                            <template slot-scope="scope">
+                                <el-input show-password type="password" v-model="newUser.password"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="联系方式">
+                            <template slot-scope="scope">
+                                <el-input v-model="newUser.tel"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="地址" min-width="150px">
+                            <template slot-scope="scope">
+                                <el-input require v-model="newUser.address"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button @click="addUser" size="mini" type="primary">添加</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-collapse-item>
+            </el-collapse>
+
+
+            <el-dialog :close-on-click-modal="false" :visible.sync="dialogVisible" title="编辑用户信息">
+                <el-form :model="editForm">
+                    <el-form-item label="用户名">
+                        <el-input v-model="editForm.username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码">
+                        <el-input placeholder="密码留空为不修改" type="password" v-model="editForm.password">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="联系方式">
+                        <el-input v-model="editForm.tel"></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址">
+                        <el-input v-model="editForm.address"></el-input>
+                    </el-form-item>
+                    <el-form-item label="余额">
+                        <el-input v-model="editForm.balance"></el-input>
+                    </el-form-item>
+                    <el-form-item label="角色">
+                        <el-select v-model="editForm.role">
+                            <el-option :value="0" label="普通用户"></el-option>
+                            <el-option :value="1" label="管理员"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <div class="dialog-footer" slot="footer">
+                    <el-button @click="dialogVisible = false" type="error">取消</el-button>
+                    <el-button @click="updateUser" type="primary">提交</el-button>
+                </div>
+            </el-dialog>
+        </el-main>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                uid: 0,
+                users: [],
+                dialogVisible: false,
+                editForm: {
+                    id: '',
+                    username: '',
+                    password: '',
+                    balance: '',
+                    tel: '',
+                    address: '',
+                    role: ''
+                },
+                newUser: {
+                    username: '',
+                    password: '',
+                    tel: '',
+                    address: ''
+                }
+            },
+            created() {
+                this.uid = fetchUid();
+                this.fetchUsers();
+            },
+            methods: {
+                navigateTo(path) {
+                    window.location.href = path;
+                },
+                fetchUsers() {
+                    axios.get('/user/admin/getUser').then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.users = result.data;
+                        } else {
+                            this.$message.error('获取用户列表失败');
+                        }
+                    }).catch(error => {
+                        console.error('获取用户列表失败:', error);
+                        this.$message.error('获取用户列表失败');
+                    });
+                },
+                editUser(user) {
+                    this.editForm = {...user, password: ''}; // Clear password field for edit
+                    this.dialogVisible = true;
+                },
+                updateUser() {
+                    axios.post('/user/admin/updateUser', this.editForm).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.$message.success(result.data);
+                            this.dialogVisible = false;
+                            this.fetchUsers();
+                        } else {
+                            this.$message.error(result.msg);
+                        }
+                    }).catch(error => {
+                        console.error('更新用户信息失败:', error);
+                        this.$message.error('更新用户信息失败');
+                    });
+                },
+                deleteUser(id) {
+                    axios.get('/user/admin/deleteUser', {params: {uid: id}}).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.$message.success(result.data);
+                            this.fetchUsers();
+                        } else {
+                            this.$message.error(result.msg);
+                        }
+                    }).catch(error => {
+                        console.error('删除用户失败:', error);
+                        this.$message.error('删除用户失败');
+                    });
+                },
+                addUser() {
+                    axios.post('/user/admin/addUser', this.newUser).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.$message.success(result.data);
+                            this.newUser = {username: '', password: '', tel: '', address: ''};
+                            this.fetchUsers();
+                        } else {
+                            this.$message.error(result.msg);
+                        }
+                    }).catch(error => {
+                        console.error('添加用户失败:', error);
+                        this.$message.error('添加用户失败');
+                    });
+                },
+                logout: logout
+            }
+        });
+    </script>
 </body>
 </html>

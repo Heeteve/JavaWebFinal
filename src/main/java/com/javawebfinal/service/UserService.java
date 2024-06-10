@@ -16,9 +16,10 @@ public interface UserService {
 
     /**
      * 注册
-     *
-     * @param user
-     * @return int
+     * @param username
+     * @param password
+     * @param tel
+     * @param address
      */
     Boolean register(String username, String password, String tel, String address);
 
@@ -44,18 +45,18 @@ public interface UserService {
     Boolean updateUserInfo(User user);
 
     /**
+     * 管理员修改用户信息
+     * @param user
+     */
+    Boolean updateUserInfoAdmin(User user);
+    
+    /**
      * 修改密码
      * 
-     * @param id, password
+     * @param id
+     * @param password
      */
     Boolean updatePassword(int id, String password);
-
-    /**
-     * 修改余额
-     * 
-     * @param id, balance
-     */
-    Boolean updateBalance(int id, double balance);
 
     /**
      * 删除用户
@@ -64,4 +65,10 @@ public interface UserService {
      */
     Boolean deleteUser(int id);
 
+    
+    /**
+     * 添加用户
+     * @param user
+     */
+    Boolean addUser(User user);
 }

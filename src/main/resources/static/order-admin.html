@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>商城 - 订单管理</title>
+    <title>订单管理 - 商城</title>
     <script src="/import/vue.js"></script>
     <script src="/import/axios.min.js"></script>
     <link href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
@@ -10,8 +10,8 @@
     <script src="/js/main.js"></script>
     <link href="/css/main.css" rel="stylesheet">
     <link href="/css/order-admin.css" rel="stylesheet">
-
 </head>
+
 <body>
     <div id="app">
         <el-header class="header">
@@ -65,7 +65,7 @@
                             <span class="order-userinfo"><b>联系方式:</b> {{ order.tel }}</span>
                             <span class="order-userinfo"><b>地址:</b> {{ order.address }}</span>
                             <div class="order-operation">
-                                <el-popconfirm @click="deliverOrder(order.order_id)"
+                                <el-popconfirm @confirm="deliverOrder(order.order_id)"
                                                icon="el-icon-info" title="确定发货？"
                                                v-if="order.status === 1">
                                     <el-button icon="el-icon-box" plain size="mini" slot="reference"
