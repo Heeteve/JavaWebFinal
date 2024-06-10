@@ -22,6 +22,15 @@ public interface ProductService {
     PageBean page(Integer page, Integer size);
 
     /**
+     * 搜索商品
+     * @param keyword
+     * @param page
+     * @param size
+     * @return
+     */
+    PageBean search(String keyword, Integer page, Integer size);
+    
+    /**
      * 修改商品信息
      * @param product
      * @return Boolean

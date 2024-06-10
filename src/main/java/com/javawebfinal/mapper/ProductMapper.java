@@ -9,6 +9,9 @@ import java.util.List;
 public interface ProductMapper {
     @Select("SELECT * FROM fi_product")
     List<Product> listAllProducts();
+    
+    @Select("SELECT * FROM fi_product WHERE brand LIKE CONCAT('%',#{keyword},'%') OR model LIKE CONCAT('%',#{keyword},'%')")
+    List<Product> search(String keyword);
 
     @Insert("INSERT INTO fi_product (brand, model, price, detail) VALUES (#{brand}, #{model}, #{price}, #{detail})")
     Boolean addProduct(Product product);

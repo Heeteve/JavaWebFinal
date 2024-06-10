@@ -163,11 +163,29 @@
                             this.$message.error(result.msg);
                         }
                     }).catch(error => {
+                        console.error('添加失败:', error);
                         this.$message.error('添加失败');
                     });
                 },
                 searchProduct() {
-                    // 搜索函数
+                    axios.get('/product/search', {
+                        params: {
+                            keyword: this.searchQuery,
+                            page: this.page,
+                            size: this.pageSize
+                        }
+                    }).then(response => {
+                        const result = response.data;
+                        if (result.code === 1) {
+                            this.products = result.data.rows;
+                            this.totalProducts = result.data.total;
+                        } else {
+                            this.$message.error(result.msg);
+                        }
+                    }).catch(error => {
+                        console.error('搜索失败:', error);
+                        this.$message.error('搜索失败');
+                    });
                 },
                 logout: logout
             },

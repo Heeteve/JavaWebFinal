@@ -54,7 +54,7 @@ public class OrderController {
         log.info("OrderController.getAllOrder()");
         return Result.success(orderService.getOrder());
     }
-    
+
     @ResponseBody
     @RequestMapping("/pay")
     public Result pay(String oid) {

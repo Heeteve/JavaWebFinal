@@ -36,6 +36,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public PageBean search(String keyword, Integer page, Integer size) {
+        //1. 设置分页参数
+        PageHelper.startPage(page, size);
+
+        //2. 执行查询
+        List<Product> productList = productMapper.search(keyword);
+        Page<Product> p = (Page<Product>) productList;
+
+        //3. 封装PageBean对象
+        PageBean pageBean = new PageBean(p.getTotal(), p.getResult());
+        return pageBean;
+    }
+
+    @Override
     public Boolean updateProduct(Product product) {
         return productMapper.updateProductById(product);
     }
